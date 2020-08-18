@@ -15,7 +15,9 @@ To install ::
 
     pip install wagtail-link-block
 
-To use in a block ::
+To use in a block
+
+.. code-block:: python
 
     from wagtail_link_block.blocks import LinkBlock
 
@@ -26,6 +28,8 @@ To use in a block ::
         class Meta:
             template = "blocks/my_button_block.html"
 
-And the blocks/my_button_block.html ::
+And the blocks/my_button_block.html
+
+.. code-block::html
 
     <a href="{{ self.link.get_url }}" {% if self.link.new_window %}target="_blank"{% endif %}>{{ self.text }}</a>

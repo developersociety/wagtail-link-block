@@ -30,6 +30,8 @@ To use in a block
 
 And the blocks/my_button_block.html
 
-.. code-block::html
+.. code-block:: HTML
 
     <a href="{{ self.link.get_url }}" {% if self.link.new_window %}target="_blank"{% endif %}>{{ self.text }}</a>
+
+

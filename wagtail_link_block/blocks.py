@@ -10,9 +10,10 @@ from wagtail.core.blocks import (
     StreamBlockValidationError,
     StructBlock,
     StructValue,
-    URLBlock,
+    CharBlock,
 )
 from wagtail.documents.blocks import DocumentChooserBlock
+from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
 
 ##############################################################################
 # Component Parts - should not be used on their own - but as parts of other
@@ -49,7 +50,12 @@ class LinkBlock(StructBlock):
     )
     page = PageChooserBlock(required=False, classname="page_link")
     file = DocumentChooserBlock(required=False, classname="file_link")
-    custom_url = URLBlock(required=False, classname="custom_url_link")
+    custom_url = CharBlock(
+        max_length=300,
+        required=False,
+        classname="custom_url_link url_field",
+        validators=[URLOrAbsolutePathValidator()],
+    )
     new_window = BooleanBlock(
         label="Open in new window", required=False, classname="new_window_toggle"
     )

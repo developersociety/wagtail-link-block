@@ -35,6 +35,12 @@ class URLValue(StructValue):
         elif link_to == "custom_url":
             return self.get(link_to)
         return None
+    
+    def get_link_to(self):
+        """
+        Return link type for accessing in templates
+        """
+        return self.get("link_to")
 
 
 class LinkBlock(StructBlock):

@@ -3,17 +3,17 @@ The LinkBlock is not designed to be used on it's own - but as part of other bloc
 """
 from django.forms.utils import ErrorList
 
+from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
 from wagtail.core.blocks import (
     BooleanBlock,
+    CharBlock,
     ChoiceBlock,
     PageChooserBlock,
     StreamBlockValidationError,
     StructBlock,
     StructValue,
-    CharBlock,
 )
 from wagtail.documents.blocks import DocumentChooserBlock
-from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
 
 ##############################################################################
 # Component Parts - should not be used on their own - but as parts of other
@@ -35,7 +35,7 @@ class URLValue(StructValue):
         elif link_to == "custom_url":
             return self.get(link_to)
         return None
-    
+
     def get_link_to(self):
         """
         Return link type for accessing in templates
@@ -45,8 +45,8 @@ class URLValue(StructValue):
 
 class LinkBlock(StructBlock):
     """
-        A Link which can either be to a (off-site) URL, to a page in the site,
-        or to a document. Use this instead of URLBlock.
+    A Link which can either be to a (off-site) URL, to a page in the site,
+    or to a document. Use this instead of URLBlock.
     """
 
     link_to = ChoiceBlock(

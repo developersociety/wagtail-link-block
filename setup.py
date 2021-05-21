@@ -25,7 +25,7 @@ setup(
     install_requires=["Django>=1.11"],
     classifiers=[
         "Intended Audience :: Developers",
-       "License :: OSI Approved :: BSD License",
+        "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",

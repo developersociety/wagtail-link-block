@@ -1,0 +1,13 @@
+[tool.black]
+line-length = 99
+target-version = ['py35']
+
+[tool.isort]
+combine_as_imports = true
+sections = ['FUTURE','STDLIB','DJANGO','THIRDPARTY','FIRSTPARTY','LOCALFOLDER']
+known_django = 'django'
+include_trailing_comma = true
+float_to_top = true
+force_grid_wrap = 0
+line_length = 99
+multi_line_output = 3

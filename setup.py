@@ -11,7 +11,7 @@ def read(filename):
 
 setup(
     name="wagtail-link-block",
-    version="0.1.1",
+    version="0.1.2",
     description="Wagtail LinkBlock",
     long_description=read("README.rst"),
     long_description_content_type="text/x-rst",

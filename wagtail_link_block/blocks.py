@@ -1,6 +1,7 @@
 """
 The LinkBlock is not designed to be used on it's own - but as part of other blocks.
 """
+from django.utils.translation import gettext_lazy as _
 from django.forms.utils import ErrorList
 
 from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
@@ -50,20 +51,22 @@ class LinkBlock(StructBlock):
     """
 
     link_to = ChoiceBlock(
-        choices=[("page", "Page"), ("file", "File"), ("custom_url", "Custom URL")],
+        choices=[("page", _("Page")), ("file", _("File")), ("custom_url", _("Custom URL"))],
         required=False,
         classname="link_choice_type_selector",
+        label=_("Link to"),
     )
-    page = PageChooserBlock(required=False, classname="page_link")
-    file = DocumentChooserBlock(required=False, classname="file_link")
+    page = PageChooserBlock(required=False, classname="page_link", label=_("Page"))
+    file = DocumentChooserBlock(required=False, classname="file_link", label=_("File"))
     custom_url = CharBlock(
         max_length=300,
         required=False,
         classname="custom_url_link url_field",
         validators=[URLOrAbsolutePathValidator()],
+        label=_("Custom URL"),
     )
     new_window = BooleanBlock(
-        label="Open in new window", required=False, classname="new_window_toggle"
+        label=_("Open in new window"), required=False, classname="new_window_toggle"
     )
 
     class Meta:

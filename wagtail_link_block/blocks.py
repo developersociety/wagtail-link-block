@@ -29,12 +29,14 @@ class URLValue(StructValue):
     def get_url(self):
         link_to = self.get("link_to")
 
-        if link_to == "page" or link_to == "file":
+        if link_to in ("page", "file"):
             # If file or page check obj is not None
             if self.get(link_to):
                 return self.get(link_to).url
         elif link_to == "custom_url":
             return self.get(link_to)
+        elif link_to == "anchor":
+            return "#" + self.get(link_to)
         return None
 
     def get_link_to(self):
@@ -51,7 +53,7 @@ class LinkBlock(StructBlock):
     """
 
     link_to = ChoiceBlock(
-        choices=[("page", _("Page")), ("file", _("File")), ("custom_url", _("Custom URL"))],
+        choices=[("page", _("Page")), ("file", _("File")), ("custom_url", _("Custom URL")), ("anchor", _("Anchor"))],
         required=False,
         classname="link_choice_type_selector",
         label=_("Link to"),
@@ -64,6 +66,12 @@ class LinkBlock(StructBlock):
         classname="custom_url_link url_field",
         validators=[URLOrAbsolutePathValidator()],
         label=_("Custom URL"),
+    )
+    anchor = CharBlock(
+        max_length=300,
+        required=False,
+        classname="anchor_link",
+        label=_("#"),
     )
     new_window = BooleanBlock(
         label=_("Open in new window"), required=False, classname="new_window_toggle"
@@ -91,6 +99,7 @@ class LinkBlock(StructBlock):
             "page": None,
             "file": None,
             "custom_url": "",
+            "anchor": "",
         }
         url_type = clean_values.get("link_to")
 

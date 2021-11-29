@@ -109,6 +109,6 @@ class LinkBlock(StructBlock):
                 errors[url_type] = ErrorList(["Enter a valid link type"])
 
         if errors:
-            raise StreamBlockValidationError(block_errors=errors)
+            raise StreamBlockValidationError(block_errors=errors, non_block_errors=ErrorList([]))
 
         return clean_values

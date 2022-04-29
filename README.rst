@@ -3,7 +3,7 @@ Wagail LinkBlock
 
 A link block to use as part of other StructBlocks which
 lets the user choose a link either to a Page, Document,
-or external URL, and whether or not they want the link
+external URL, or Email and whether or not they want the link
 to open in a new window.
 
 It hides the unused fields, making the admin clearer and less cluttered.

@@ -56,7 +56,8 @@ class LinkBlock(StructBlock):
         choices=[
             ("page", _("Page")),
             ("file", _("File")),
-            ("custom_url", _("Custom URL"), ("email", _("Email"))),
+            ("custom_url", _("Custom URL")),
+            ("email", _("Email")),
         ],
         required=False,
         classname="link_choice_type_selector",

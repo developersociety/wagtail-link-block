@@ -35,6 +35,8 @@ class URLValue(StructValue):
                 return self.get(link_to).url
         elif link_to == "custom_url":
             return self.get(link_to)
+        elif link_to == "email":
+            return "mailto:{}".format(self.get(link_to))
         return None
 
     def get_link_to(self):
@@ -51,7 +53,12 @@ class LinkBlock(StructBlock):
     """
 
     link_to = ChoiceBlock(
-        choices=[("page", _("Page")), ("file", _("File")), ("custom_url", _("Custom URL"))],
+        choices=[
+            ("page", _("Page")),
+            ("file", _("File")),
+            ("custom_url", _("Custom URL")),
+            ("email", _("Email")),
+        ],
         required=False,
         classname="link_choice_type_selector",
         label=_("Link to"),
@@ -65,6 +72,7 @@ class LinkBlock(StructBlock):
         validators=[URLOrAbsolutePathValidator()],
         label=_("Custom URL"),
     )
+    email = EmailBlock(required=False)
     new_window = BooleanBlock(
         label=_("Open in new window"), required=False, classname="new_window_toggle"
     )
@@ -91,6 +99,7 @@ class LinkBlock(StructBlock):
             "page": None,
             "file": None,
             "custom_url": "",
+            "email": "",
         }
         url_type = clean_values.get("link_to")
 

@@ -9,6 +9,7 @@ from wagtail.core.blocks import (
     BooleanBlock,
     CharBlock,
     ChoiceBlock,
+    EmailBlock,
     PageChooserBlock,
     StreamBlockValidationError,
     StructBlock,
@@ -37,6 +38,8 @@ class URLValue(StructValue):
             return self.get(link_to)
         elif link_to == "anchor":
             return "#" + self.get(link_to)
+        elif link_to == "email":
+            return "mailto:{}".format(self.get(link_to))
         return None
 
     def get_link_to(self):
@@ -53,7 +56,13 @@ class LinkBlock(StructBlock):
     """
 
     link_to = ChoiceBlock(
-        choices=[("page", _("Page")), ("file", _("File")), ("custom_url", _("Custom URL")), ("anchor", _("Anchor"))],
+        choices=[
+            ("page", _("Page")),
+            ("file", _("File")),
+            ("custom_url", _("Custom URL")),
+            ("email", _("Email")),
+            ("anchor", _("Anchor")),
+        ],
         required=False,
         classname="link_choice_type_selector",
         label=_("Link to"),
@@ -73,6 +82,7 @@ class LinkBlock(StructBlock):
         classname="anchor_link",
         label=_("#"),
     )
+    email = EmailBlock(required=False)
     new_window = BooleanBlock(
         label=_("Open in new window"), required=False, classname="new_window_toggle"
     )
@@ -100,6 +110,7 @@ class LinkBlock(StructBlock):
             "file": None,
             "custom_url": "",
             "anchor": "",
+            "email": "",
         }
         url_type = clean_values.get("link_to")
 
@@ -118,6 +129,6 @@ class LinkBlock(StructBlock):
                 errors[url_type] = ErrorList(["Enter a valid link type"])
 
         if errors:
-            raise StreamBlockValidationError(block_errors=errors)
+            raise StreamBlockValidationError(block_errors=errors, non_block_errors=ErrorList([]))
 
         return clean_values

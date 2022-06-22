@@ -1,9 +1,9 @@
-Wagail LinkBlock
+Wagtail LinkBlock
 ================
 
 A link block to use as part of other StructBlocks which
 lets the user choose a link either to a Page, Document,
-external URL, Email, or anchor within the current page
+external URL, Email, telephone or anchor within the current page
 and whether or not they want the link to open in a new window.
 
 It hides the unused fields, making the admin clearer and less cluttered.

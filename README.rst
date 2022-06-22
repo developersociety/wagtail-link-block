@@ -1,5 +1,5 @@
 Wagtail LinkBlock
-================
+=================
 
 A link block to use as part of other StructBlocks which
 lets the user choose a link either to a Page, Document,

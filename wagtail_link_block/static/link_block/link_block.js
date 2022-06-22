@@ -7,13 +7,13 @@
 
     function setRelatedFieldsVisibility(link_type_selector) {
         const value = link_type_selector.value;
-        const parent = link_type_selector.closest('.link_block');
-            page_link = parent.querySelector('.page_link_field');
-            file_link = parent.querySelector('.file_link_field');
-            custom_url_link = parent.querySelector('.custom_url_link_field');
-            anchor_link = parent.querySelector('.anchor_link_field');
-            new_window_toggle = parent.querySelector('.new_window_link_field');
-            email_address = parent.querySelector('.email_link_field');
+        const parent = link_type_selector.closest('.link_block'),
+            page_link = parent.querySelector('.page_link_field'),
+            file_link = parent.querySelector('.file_link_field'),
+            custom_url_link = parent.querySelector('.custom_url_link_field'),
+            anchor_link = parent.querySelector('.anchor_link_field'),
+            new_window_toggle = parent.querySelector('.new_window_link_field'),
+            email_address = parent.querySelector('.email_link_field'),
             phone_link = parent.querySelector('.phone_link_field');
 
         // first hide all

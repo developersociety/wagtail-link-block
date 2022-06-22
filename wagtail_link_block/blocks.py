@@ -40,6 +40,8 @@ class URLValue(StructValue):
             return "#" + self.get(link_to)
         elif link_to == "email":
             return "mailto:{}".format(self.get(link_to))
+        elif link_to == "phone":
+            return "tel:{}".format(self.get(link_to))
         return None
 
     def get_link_to(self):
@@ -62,6 +64,7 @@ class LinkBlock(StructBlock):
             ("custom_url", _("Custom URL")),
             ("email", _("Email")),
             ("anchor", _("Anchor")),
+            ("phone", _("Phone")),
         ],
         required=False,
         classname="link_choice_type_selector",
@@ -83,6 +86,13 @@ class LinkBlock(StructBlock):
         label=_("#"),
     )
     email = EmailBlock(required=False)
+    phone = CharBlock(
+        max_length=30,
+        required=False,
+        classname="phone_link",
+        label=_("Phone")
+    )
+
     new_window = BooleanBlock(
         label=_("Open in new window"), required=False, classname="new_window_toggle"
     )
@@ -111,6 +121,7 @@ class LinkBlock(StructBlock):
             "custom_url": "",
             "anchor": "",
             "email": "",
+            "phone": "",
         }
         url_type = clean_values.get("link_to")
 

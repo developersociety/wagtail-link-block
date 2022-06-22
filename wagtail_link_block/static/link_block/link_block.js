@@ -12,7 +12,7 @@
             file_link = parent.querySelector('.file_link_field'),
             custom_url_link = parent.querySelector('.custom_url_link_field'),
             anchor_link = parent.querySelector('.anchor_link_field'),
-            new_window_toggle = parent.querySelector('.new_window_link_field');
+            new_window_toggle = parent.querySelector('.new_window_link_field'),
             email_address = parent.querySelector('.email_link_field');
 
         // first hide all

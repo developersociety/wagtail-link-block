@@ -11,40 +11,38 @@
             page_link = parent.querySelector('.page_link_field'),
             file_link = parent.querySelector('.file_link_field'),
             custom_url_link = parent.querySelector('.custom_url_link_field'),
-            new_window_toggle = parent.querySelector('.new_window_link_field');
-            email_address = parent.querySelector('.email_link_field');
+            anchor_link = parent.querySelector('.anchor_link_field'),
+            new_window_toggle = parent.querySelector('.new_window_link_field'),
+            email_address = parent.querySelector('.email_link_field'),
+            phone_link = parent.querySelector('.phone_link_field');
 
-        // this is repetative, but I don't mind.  No magic.
+        // first hide all
+        page_link.classList.add('link-block__hidden');
+        file_link.classList.add('link-block__hidden');
+        custom_url_link.classList.add('link-block__hidden');
+        anchor_link.classList.add('link-block__hidden');
+        new_window_toggle.classList.add('link-block__hidden');
+        email_address.classList.add('link-block__hidden');
+        phone_link.classList.add('link-block__hidden');
+
+        // display the one
         if (value === 'page') {
             page_link.classList.remove('link-block__hidden');
-            file_link.classList.add('link-block__hidden');
-            custom_url_link.classList.add('link-block__hidden');
             new_window_toggle.classList.remove('link-block__hidden');
-            email_address.classList.add('mail-to-link-block__hidden');
         } else if (value === 'file') {
-            page_link.classList.add('link-block__hidden');
             file_link.classList.remove('link-block__hidden');
-            custom_url_link.classList.add('link-block__hidden');
-            new_window_toggle.classList.add('link-block__hidden');
-            email_address.classList.add('mail-to-link-block__hidden');
         } else if (value === 'custom_url') {
-            page_link.classList.add('link-block__hidden');
-            file_link.classList.add('link-block__hidden');
             custom_url_link.classList.remove('link-block__hidden');
             new_window_toggle.classList.remove('link-block__hidden');
-            email_address.classList.add('mail-to-link-block__hidden');
-        else if (value === 'email') {
-            page_link.classList.add('mail-to-link-block__hidden');
-            file_link.classList.add('mail-to-link-block__hidden');
-            custom_url_link.classList.add('mail-to-link-block__hidden');
-            new_window_toggle.classList.add('mail-to-link-block__hidden');
-            email_address.classList.remove('mail-to-link-block__hidden');
+        } else if (value === 'anchor') {
+            anchor_link.classList.remove('link-block__hidden');
+            new_window_toggle.classList.remove('link-block__hidden');
+        } else if (value === 'email') {
+            email_address.classList.remove('link-block__hidden');
+        } else if (value === 'phone') {
+            phone_link.classList.remove('link-block__hidden');
         } else {
-            page_link.classList.add('link-block__hidden');
-            file_link.classList.add('link-block__hidden');
-            custom_url_link.classList.add('link-block__hidden');
-            new_window_toggle.classList.add('link-block__hidden');
-            email_address.classList.add('mail-to-link-block__hidden');
+          // I don't know what to display here.
         }
     }
 

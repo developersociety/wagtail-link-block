@@ -9,6 +9,7 @@ from wagtail.core.blocks import (
     BooleanBlock,
     CharBlock,
     ChoiceBlock,
+    EmailBlock,
     PageChooserBlock,
     StreamBlockValidationError,
     StructBlock,
@@ -29,14 +30,18 @@ class URLValue(StructValue):
     def get_url(self):
         link_to = self.get("link_to")
 
-        if link_to == "page" or link_to == "file":
+        if link_to in ("page", "file"):
             # If file or page check obj is not None
             if self.get(link_to):
                 return self.get(link_to).url
         elif link_to == "custom_url":
             return self.get(link_to)
+        elif link_to == "anchor":
+            return "#" + self.get(link_to)
         elif link_to == "email":
             return "mailto:{}".format(self.get(link_to))
+        elif link_to == "phone":
+            return "tel:{}".format(self.get(link_to))
         return None
 
     def get_link_to(self):
@@ -58,6 +63,8 @@ class LinkBlock(StructBlock):
             ("file", _("File")),
             ("custom_url", _("Custom URL")),
             ("email", _("Email")),
+            ("anchor", _("Anchor")),
+            ("phone", _("Phone")),
         ],
         required=False,
         classname="link_choice_type_selector",
@@ -72,7 +79,20 @@ class LinkBlock(StructBlock):
         validators=[URLOrAbsolutePathValidator()],
         label=_("Custom URL"),
     )
+    anchor = CharBlock(
+        max_length=300,
+        required=False,
+        classname="anchor_link",
+        label=_("#"),
+    )
     email = EmailBlock(required=False)
+    phone = CharBlock(
+        max_length=30,
+        required=False,
+        classname="phone_link",
+        label=_("Phone")
+    )
+
     new_window = BooleanBlock(
         label=_("Open in new window"), required=False, classname="new_window_toggle"
     )
@@ -99,7 +119,9 @@ class LinkBlock(StructBlock):
             "page": None,
             "file": None,
             "custom_url": "",
+            "anchor": "",
             "email": "",
+            "phone": "",
         }
         url_type = clean_values.get("link_to")
 

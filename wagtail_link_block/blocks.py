@@ -5,16 +5,30 @@ from django.utils.translation import gettext_lazy as _
 from django.forms.utils import ErrorList
 
 from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
-from wagtail.core.blocks import (
-    BooleanBlock,
-    CharBlock,
-    ChoiceBlock,
-    EmailBlock,
-    PageChooserBlock,
-    StreamBlockValidationError,
-    StructBlock,
-    StructValue,
-)
+from wagtail import __version__ as wagtail_version
+
+if wagtail_version[0] >= 3:
+    from wagtail.blocks import (
+        BooleanBlock,
+        CharBlock,
+        ChoiceBlock,
+        EmailBlock,
+        PageChooserBlock,
+        StreamBlockValidationError,
+        StructBlock,
+        StructValue,
+    )
+else:
+    from wagtail.core.blocks import (
+        BooleanBlock,
+        CharBlock,
+        ChoiceBlock,
+        EmailBlock,
+        PageChooserBlock,
+        StreamBlockValidationError,
+        StructBlock,
+        StructValue,
+    )
 from wagtail.documents.blocks import DocumentChooserBlock
 
 ##############################################################################

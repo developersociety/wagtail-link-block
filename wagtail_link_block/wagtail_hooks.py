@@ -1,7 +1,12 @@
 from django.templatetags.static import static
 from django.utils.html import format_html
 
-from wagtail.core import hooks
+from wagtail import __version__ as wagtail_version
+
+if wagtail_version[0] >= 3:
+    from wagtail import hooks
+else:
+    from wagtail.core import hooks
 
 
 @hooks.register("insert_global_admin_css")

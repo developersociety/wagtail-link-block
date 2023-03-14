@@ -1,0 +1,22 @@
+name: CI
+on: [pull_request]
+jobs:
+  lint-and-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load cached $HOME/.local
+        uses: actions/cache@v3
+        with:
+          path: ~/.local
+          key: dotlocal-${{ runner.os }}-${{ hashFiles('.github/workflows/ci.yml') }}
+      - uses: actions/checkout@v3
+      - name: Install Poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: poetry
+      - run: poetry install
+        name: Install Development Dependencies
+      - run: poetry run make lint
+        name: Lint

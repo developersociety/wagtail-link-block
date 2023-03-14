@@ -24,9 +24,10 @@ classifiers = [
 license = "BSD"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8.1"
 # Django = "^1.11"
 # wagtail = "^2.7"
+flake8 = "^6.0.0"
 
 [tool.poetry.group.lint.dependencies]
 black = "^23.1.0"

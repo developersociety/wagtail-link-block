@@ -3,7 +3,7 @@ from django.utils.html import format_html
 
 from wagtail import __version__ as wagtail_version
 
-if wagtail_version[0] >= 3:
+if int(wagtail_version[0]) >= 3:
     from wagtail import hooks
 else:
     from wagtail.core import hooks

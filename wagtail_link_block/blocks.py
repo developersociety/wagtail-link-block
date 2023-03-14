@@ -8,7 +8,7 @@ from wagtail import __version__ as wagtail_version
 from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
 from wagtail.documents.blocks import DocumentChooserBlock
 
-if wagtail_version[0] >= 3:
+if int(wagtail_version[0]) >= 3:
     from wagtail.blocks import (
         BooleanBlock,
         CharBlock,

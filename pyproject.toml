@@ -33,10 +33,6 @@ black = "^23.1"
 isort = "^5.12"
 flake8 = "^6.0.0"
 
-# [tool.poetry.group.local.dependencies]
-# watchfiles = "^0.18.1"
-# ipdb = "^0.13.11"
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

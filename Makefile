@@ -31,7 +31,7 @@ black-format:
 build: ## Build the project ready for deployment to pypi
 build: dist
 
-dist:
+dist: pyproject.toml
 	poetry build
 
 deploy-test: ## Build and upload the project to TestPyPI (sandbox)

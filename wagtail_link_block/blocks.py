@@ -80,7 +80,7 @@ class LinkBlock(StructBlock):
             ("anchor", _("Anchor")),
             ("phone", _("Phone")),
         ],
-        required=False,
+        required=True,
         classname="link_choice_type_selector",
         label=_("Link to"),
     )

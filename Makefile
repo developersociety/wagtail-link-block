@@ -12,27 +12,27 @@ lint: black-lint isort-lint flake8-lint
 
 # ISort
 isort-lint:
-	isort --check-only --diff ${PROJECT_DIR} setup.py
+	isort --check-only --diff ${PROJECT_DIR}
 
 isort-format:
-	isort ${PROJECT_DIR} setup.py
+	isort ${PROJECT_DIR}
 
 # Flake8
 flake8-lint:
-	flake8 ${PROJECT_DIR} setup.py
+	flake8 ${PROJECT_DIR}
 
 # Black
 black-lint:
-	black --check ${PROJECT_DIR} setup.py
+	black --check ${PROJECT_DIR}
 
 black-format:
-	black ${PROJECT_DIR} setup.py
+	black ${PROJECT_DIR}
 
 build: ## Build the project ready for deployment to pypi
 build: dist
 
-dist: setup.py
-	python3 setup.py sdist bdist_wheel
+dist: pyproject.toml
+	poetry build
 
 deploy-test: ## Build and upload the project to TestPyPI (sandbox)
 deploy-test: dist

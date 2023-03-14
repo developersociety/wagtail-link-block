@@ -1,3 +1,42 @@
+[tool.poetry]
+name = "wagtail-link-block"
+version = "0.1.6"
+description = "A Block for wagtail that lets users choose a Page/Document/URL/email/etc. as a link"
+authors = ["The Developer Society <studio@dev.ngo>"]
+readme = "README.rst"
+packages = [{include = "wagtail_link_block"}]
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Framework :: Django",
+    "Framework :: Django :: 1.11",
+    "Framework :: Django :: 2.2",
+    "Framework :: Django :: 3.2",
+]
+license = "BSD"
+
+[tool.poetry.dependencies]
+python = ">=3.8.1"
+Django = ">=1.11"
+wagtail = ">=2.7"
+
+[tool.poetry.group.lint.dependencies]
+black = "^23.1"
+isort = "^5.12"
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.black]
 line-length = 99
 target-version = ['py35']
@@ -11,3 +50,4 @@ float_to_top = true
 force_grid_wrap = 0
 line_length = 99
 multi_line_output = 3
+

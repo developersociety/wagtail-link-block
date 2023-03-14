@@ -1,6 +1,16 @@
 Wagtail LinkBlock
 =================
 
+.. image:: https://github.com/developersociety/wagtail-link-block/actions/workflows/ci.yml/badge.svg
+   :target: https://github.com/developersociety/wagtail-link-block/actions/
+   :alt: Build Status
+
+.. |PyPI version fury.io| image:: https://badge.fury.io/py/wagtail-link-block.svg
+   :target: https://pypi.python.org/pypi/wagtail-link-block/
+
+.. |Licence| image:: https://img.shields.io/github/license/developersociety/wagtail-link-block.svg
+   :alt: BSD Licenced
+
 A link block to use as part of other StructBlocks which
 lets the user choose a link either to a Page, Document,
 external URL, Email, telephone or anchor within the current page

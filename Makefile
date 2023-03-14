@@ -36,14 +36,11 @@ dist: pyproject.toml
 
 deploy-test: ## Build and upload the project to TestPyPI (sandbox)
 deploy-test: dist
-	@echo You will need to manually run:
-	@echo 'twine upload -r testpypi dist/*'
+	poetry publish -r test-pypi
 
 deploy: ## Build and upload the project to PyPI
 deploy: dist
-	@echo You will need to manually run:
-	@echo 'twine upload dist/*'
-
+	poetry publish
 
 
 # Help

@@ -1,11 +1,12 @@
 """
 The LinkBlock is not designed to be used on it's own - but as part of other blocks.
 """
-from django.utils.translation import gettext_lazy as _
 from django.forms.utils import ErrorList
+from django.utils.translation import gettext_lazy as _
 
-from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
 from wagtail import __version__ as wagtail_version
+from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
+from wagtail.documents.blocks import DocumentChooserBlock
 
 if wagtail_version[0] >= 3:
     from wagtail.blocks import (
@@ -29,7 +30,6 @@ else:
         StructBlock,
         StructValue,
     )
-from wagtail.documents.blocks import DocumentChooserBlock
 
 ##############################################################################
 # Component Parts - should not be used on their own - but as parts of other
@@ -100,12 +100,7 @@ class LinkBlock(StructBlock):
         label=_("#"),
     )
     email = EmailBlock(required=False)
-    phone = CharBlock(
-        max_length=30,
-        required=False,
-        classname="phone_link",
-        label=_("Phone")
-    )
+    phone = CharBlock(max_length=30, required=False, classname="phone_link", label=_("Phone"))
 
     new_window = BooleanBlock(
         label=_("Open in new window"), required=False, classname="new_window_toggle"

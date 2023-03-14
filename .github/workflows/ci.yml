@@ -20,3 +20,5 @@ jobs:
         name: Install Development Dependencies
       - run: poetry run make lint
         name: Lint
+      - run: poetry build
+        name: Test poetry build

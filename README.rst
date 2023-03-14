@@ -45,3 +45,9 @@ And the blocks/my_button_block.html
 .. code-block:: HTML
 
     <a href="{{ self.link.get_url }}" {% if self.link.new_window %}target="_blank"{% endif %}>{{ self.text }}</a>
+
+Developing
+----------
+
+We're using ``black``, ``isort`` & ``flake8`` for formatting & linting, and there are ``poetry``
+commands in the ``Makefile`` for building, etc.

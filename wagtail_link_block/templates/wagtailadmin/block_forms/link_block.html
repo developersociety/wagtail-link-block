@@ -18,7 +18,11 @@
                      {% endif %}
                      ">
       {% if child.block.label %}
-        <label class="field__label" {% if child.id_for_label %}for="{{ child.id_for_label }}"{% endif %}>{{ child.block.label }}</label>
+        <label class="w-field__label" {% if child.id_for_label %}for="{{ child.id_for_label }}"{% endif %}>{{ child.block.label }}
+          {% if child.block.required or child.block.name in 'page,file,custom_url,anchor,email,phone' %}
+            <span class="w-required-mark">*</span>
+          {% endif %}
+        </label>
       {% endif %}
       {{ child.render_form }}
     </div>

@@ -1,6 +1,8 @@
 """
 The LinkBlock is not designed to be used on it's own - but as part of other blocks.
 """
+from copy import deepcopy
+
 from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
 
@@ -113,6 +115,14 @@ class LinkBlock(StructBlock):
         form_classname = "link_block"
         form_template = "wagtailadmin/block_forms/link_block.html"
         template = "blocks/link_block.html"
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        # Make a deep copy of the link-to, as we need to pass the
+        # 'required' option down to it, and don't want to pollute
+        # the other LinkBlocks that are defined on other parent blocks.
+        self.child_blocks["link_to"] = deepcopy(self.child_blocks["link_to"])
+        self.child_blocks["link_to"].field.required = kwargs.get("required", False)
 
     def set_name(self, name):
         """

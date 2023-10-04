@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wagtail-link-block"
-version = "0.1.6"
+version = "1.1.7"
 description = "A Block for wagtail that lets users choose a Page/Document/URL/email/etc. as a link"
 authors = ["The Developer Society <studio@dev.ngo>"]
 readme = "README.rst"

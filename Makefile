@@ -10,6 +10,12 @@ format: black-format isort-format
 lint: ## Lint the project.
 lint: black-lint isort-lint flake8-lint
 
+check: ## Check for any obvious errors in the project's setup.
+check: pipdeptree-check
+
+test: ## Run unit and integration tests.
+test: django-test
+
 # ISort
 isort-lint:
 	isort --check-only --diff ${PROJECT_DIR}
@@ -41,6 +47,34 @@ deploy-test: dist
 deploy: ## Build and upload the project to PyPI
 deploy: dist
 	poetry publish
+
+
+# pipdeptree
+pipdeptree-check:
+	pipdeptree --warn fail >/dev/null
+
+
+# Coverage
+coverage-report: coverage-combine coverage-html
+	coverage report --show-missing
+
+coverage-combine:
+	coverage combine
+
+coverage-html:
+	coverage html
+
+coverage-clean:
+	rm -rf htmlcov
+	rm -f .coverage
+
+
+# Project testing
+django-test:
+	PYTHONWARNINGS=all coverage run $$(which django-admin) test --pythonpath $$(pwd) --settings tests.settings tests
+
+tox-test-lowest:
+	tox --recreate --override testenv.uv_resolution=lowest
 
 
 # Help

@@ -1,6 +1,7 @@
 """
 The LinkBlock is not designed to be used on it's own - but as part of other blocks.
 """
+
 from copy import deepcopy
 
 from django.forms.utils import ErrorList

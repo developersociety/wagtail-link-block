@@ -2,4 +2,4 @@
 branch = true
 parallel = true
 include =
-    wagtail_navigation/*
+    wagtail_link_block/**

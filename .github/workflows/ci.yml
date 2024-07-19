@@ -1,24 +1,83 @@
 name: CI
-on: [pull_request]
+on: pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 jobs:
-  lint-and-tests:
-    runs-on: ubuntu-latest
+  matrix:
+    name: Build test matrix
+    runs-on: ubuntu-24.04
     steps:
-      - name: Load cached $HOME/.local
-        uses: actions/cache@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          path: ~/.local
-          key: dotlocal-${{ runner.os }}-${{ hashFiles('.github/workflows/ci.yml') }}
-      - uses: actions/checkout@v4
-      - name: Install Poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v5
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: poetry
-      - run: poetry install
-        name: Install Development Dependencies
-      - run: poetry run make lint
-        name: Lint
-      - run: poetry build
-        name: Test poetry build
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: "requirements/*.txt"
+      - name: Run tox
+        id: matrix
+        run: |
+          pip install $(grep -E "^(tox|tox-uv)==" requirements/local.txt)
+          echo "tox_matrix=$(tox -l | fgrep -v coverage | python .github/matrix.py)" >> $GITHUB_OUTPUT
+    outputs:
+      tox_matrix: ${{ steps.matrix.outputs.tox_matrix }}
+
+  test:
+    name: Test -- ${{ matrix.tox_env }}
+    runs-on: ubuntu-24.04
+    needs: matrix
+    strategy:
+      matrix:
+        include: ${{ fromJson(needs.matrix.outputs.tox_matrix) }}
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: "pip"
+          cache-dependency-path: "requirements/*.txt"
+      - name: Run tests
+        run: |
+          pip install $(grep -E "^(tox|tox-uv)==" requirements/local.txt)
+          tox -e ${{ matrix.tox_env }}
+      - name: Upload coverage data
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-data-${{ matrix.tox_env }}
+          path: .coverage.*
+          if-no-files-found: ignore
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-24.04
+    needs: test
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: "requirements/*.txt"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-data-*
+          merge-multiple: true
+      - name: Run coverage
+        run: |
+          pip install $(grep -E "^(tox|tox-uv)==" requirements/local.txt)
+          tox -e coverage
+          tox -qq exec -e coverage -- coverage report --format=markdown >> $GITHUB_STEP_SUMMARY

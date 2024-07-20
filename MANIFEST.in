@@ -1,4 +1,3 @@
-include README.rst
 include LICENSE
 graft wagtail_link_block
 global-exclude *.py[co]

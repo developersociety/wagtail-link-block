@@ -35,18 +35,19 @@ black-format:
 	black ${PROJECT_DIR}
 
 build: ## Build the project ready for deployment to pypi
-build: dist
+build: build-package
 
-dist: pyproject.toml
-	poetry build
+# Build
+build-clean:
+	rm -rf build
+	rm -rf dist
+	rm -rf .eggs
+	find . -maxdepth 1 -name '*.egg-info' -exec rm -rf {} +
 
-deploy-test: ## Build and upload the project to TestPyPI (sandbox)
-deploy-test: dist
-	poetry publish -r test-pypi
-
-deploy: ## Build and upload the project to PyPI
-deploy: dist
-	poetry publish
+build-package:
+	python -m build
+	twine check --strict dist/*
+	check-wheel-contents dist/*.whl
 
 
 # pipdeptree

@@ -1,4 +1,4 @@
-[tool.poetry]
+[project]
 name = "wagtail-link-block"
 version = "1.1.7"
 description = "A Block for wagtail that lets users choose a Page/Document/URL/email/etc. as a link"
@@ -23,19 +23,12 @@ classifiers = [
 ]
 license = "BSD"
 
-[tool.poetry.dependencies]
-python = ">=3.8.1"
-Django = ">=1.11"
-wagtail = ">=2.7"
-
-[tool.poetry.group.lint.dependencies]
-black = "^23.1"
-isort = "^5.12"
-flake8 = "^6.0.0"
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ['setuptools >= 61.0']
+build-backend = 'setuptools.build_meta'
+
+[tool.setuptools.packages.find]
+include = ['wagtail_link_block*']
 
 [tool.ruff]
 line-length = 99

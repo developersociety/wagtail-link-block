@@ -2,7 +2,7 @@ DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memor
 
 USE_TZ = True
 
-SECRET_KEY = "secret"
+SECRET_KEY = "secret"  # noqa:S105
 
 INSTALLED_APPS = [
     "django.contrib.admin",

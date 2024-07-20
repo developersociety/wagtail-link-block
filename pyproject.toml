@@ -37,17 +37,29 @@ flake8 = "^6.0.0"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.black]
+[tool.ruff]
 line-length = 99
-target-version = ['py35']
+target-version = 'py38'
 
-[tool.isort]
-combine_as_imports = true
-sections = ['FUTURE','STDLIB','DJANGO','THIRDPARTY','FIRSTPARTY','LOCALFOLDER']
-known_django = 'django'
-include_trailing_comma = true
-float_to_top = true
-force_grid_wrap = 0
-line_length = 99
-multi_line_output = 3
+[tool.ruff.lint]
+select = [
+    'F',   # pyflakes
+    'E',   # pycodestyle
+    'W',   # pycodestyle
+    'I',   # isort
+    'N',   # pep8-naming
+    'UP',  # pyupgrade
+    'S',   # flake8-bandit
+    'BLE', # flake8-blind-except
+    'C4',  # flake8-comprehensions
+    'EM',  # flake8-errmsg
+    'T20', # flake8-print
+    'RET', # flake8-return
+    'RUF', # ruff
+]
+ignore = [
+    'EM101', # flake8-errmsg: raw-string-in-exception
+]
 
+[tool.ruff.lint.isort]
+combine-as-imports = true

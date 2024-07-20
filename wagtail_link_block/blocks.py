@@ -6,7 +6,6 @@ from copy import deepcopy
 
 from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
-
 from wagtail import __version__ as wagtail_version
 from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
 from wagtail.documents.blocks import DocumentChooserBlock
@@ -56,9 +55,9 @@ class URLValue(StructValue):
         elif link_to == "anchor":
             return "#" + self.get(link_to)
         elif link_to == "email":
-            return "mailto:{}".format(self.get(link_to))
+            return f"mailto:{self.get(link_to)}"
         elif link_to == "phone":
-            return "tel:{}".format(self.get(link_to))
+            return f"tel:{self.get(link_to)}"
         return None
 
     def get_link_to(self):

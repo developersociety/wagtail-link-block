@@ -1,6 +1,0 @@
-[flake8]
-max-line-length = 99
-# F405 - ignore wildcard variable warnings, as F403 (don't use wildcard imports) should show the
-# problem anyway. But if we really need wildcard imports - we don't want to noqa every variable.
-# W503 - line break before binary operator, considered not PEP 8 compliant by black.
-ignore = F405,W503

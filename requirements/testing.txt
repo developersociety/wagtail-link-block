@@ -1,8 +1,6 @@
-black==24.4.2
 build==1.2.1
 check-wheel-contents==0.6.0
 coverage==7.6.0
-flake8==7.1.0
-isort==5.13.2
 pipdeptree==2.23.1
+ruff==0.5.5
 twine==5.1.1

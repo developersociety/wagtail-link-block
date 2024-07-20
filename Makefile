@@ -1,41 +1,61 @@
+SHELL=/bin/bash
 .DEFAULT_GOAL := help
-PROJECT_DIR=wagtail_link_block
 
-help: ## Display this help dialog
+
+# ---------------------------------
+# Project specific targets
+# ---------------------------------
+#
+# Add any targets specific to the current project in here.
+
+
+
+# -------------------------------
+# Common targets for DEV projects
+# -------------------------------
+#
+# Edit these targets so they work as expected on the current project.
+#
+# Remember there may be other tools which use these targets, so if a target is not suitable for
+# the current project, then keep the target and simply make it do nothing.
+
+help: ## This help dialog.
 help: help-display
 
-format: ## Run this project's code formatters.
-format: black-format isort-format
+clean: ## Remove unneeded files generated from the various build tasks.
+clean: build-clean
 
-lint: ## Lint the project.
-lint: black-lint isort-lint flake8-lint
+reset: ## Reset your local environment. Useful after switching branches, etc.
+reset: venv-check venv-wipe install-local
 
 check: ## Check for any obvious errors in the project's setup.
 check: pipdeptree-check
 
+format: ## Run this project's code formatters.
+format: ruff-format
+
+lint: ## Lint the project.
+lint: ruff-lint
+
 test: ## Run unit and integration tests.
 test: django-test
 
-# ISort
-isort-lint:
-	isort --check-only --diff ${PROJECT_DIR}
+test-report: ## Run and report on unit and integration tests.
+test-report: coverage-clean test coverage-report
 
-isort-format:
-	isort ${PROJECT_DIR}
+test-lowest: ## Run tox with lowest (oldest) package dependencies.
+test-lowest: tox-test-lowest
 
-# Flake8
-flake8-lint:
-	flake8 ${PROJECT_DIR}
+package: ## Builds source and wheel packages
+package: clean build-package
 
-# Black
-black-lint:
-	black --check ${PROJECT_DIR}
 
-black-format:
-	black ${PROJECT_DIR}
-
-build: ## Build the project ready for deployment to pypi
-build: build-package
+# ---------------
+# Utility targets
+# ---------------
+#
+# Targets which are used by the common targets. You likely want to customise these per project,
+# to ensure they're pointing at the correct directories, etc.
 
 # Build
 build-clean:
@@ -50,9 +70,25 @@ build-package:
 	check-wheel-contents dist/*.whl
 
 
-# pipdeptree
-pipdeptree-check:
-	pipdeptree --warn fail >/dev/null
+# Virtual Environments
+venv-check:
+ifndef VIRTUAL_ENV
+	$(error Must be in a virtualenv)
+endif
+
+venv-wipe: venv-check
+	if ! pip list --format=freeze | grep -v "^pip=\|^setuptools=\|^wheel=" | xargs pip uninstall -y; then \
+	    echo "Nothing to remove"; \
+	fi
+
+
+# Installs
+install-local: pip-install-local
+
+
+# Pip
+pip-install-local: venv-check
+	pip install -r requirements/local.txt
 
 
 # Coverage
@@ -68,6 +104,21 @@ coverage-html:
 coverage-clean:
 	rm -rf htmlcov
 	rm -f .coverage
+
+
+# ruff
+ruff-lint:
+	ruff check
+	ruff format --check
+
+ruff-format:
+	ruff check --fix-only
+	ruff format
+
+
+# pipdeptree
+pipdeptree-check:
+	pipdeptree --warn fail >/dev/null
 
 
 # Project testing

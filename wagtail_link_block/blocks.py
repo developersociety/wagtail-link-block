@@ -6,32 +6,18 @@ from copy import deepcopy
 
 from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
-from wagtail import __version__ as wagtail_version
 from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
+from wagtail.blocks import (
+    BooleanBlock,
+    CharBlock,
+    ChoiceBlock,
+    EmailBlock,
+    PageChooserBlock,
+    StreamBlockValidationError,
+    StructBlock,
+    StructValue,
+)
 from wagtail.documents.blocks import DocumentChooserBlock
-
-if int(wagtail_version[0]) >= 3:
-    from wagtail.blocks import (
-        BooleanBlock,
-        CharBlock,
-        ChoiceBlock,
-        EmailBlock,
-        PageChooserBlock,
-        StreamBlockValidationError,
-        StructBlock,
-        StructValue,
-    )
-else:
-    from wagtail.core.blocks import (
-        BooleanBlock,
-        CharBlock,
-        ChoiceBlock,
-        EmailBlock,
-        PageChooserBlock,
-        StreamBlockValidationError,
-        StructBlock,
-        StructValue,
-    )
 
 ##############################################################################
 # Component Parts - should not be used on their own - but as parts of other

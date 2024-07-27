@@ -1,4 +1,4 @@
-include LICENSE
+prune tests
 graft wagtail_link_block
 global-exclude *.py[co]
 global-exclude __pycache__

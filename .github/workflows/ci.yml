@@ -53,6 +53,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-data-${{ matrix.tox_env }}
+          include-hidden-files: true
           path: .coverage.*
           if-no-files-found: ignore
 

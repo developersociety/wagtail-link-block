@@ -4,9 +4,9 @@ version = '1.1.7'
 description = 'A Block for Wagtail that lets users choose a Page/Document/URL/email/etc. as a link'
 readme = 'README.md'
 maintainers = [{ name = 'The Developer Society', email = 'studio@dev.ngo' }]
-requires-python = '>= 3.8'
+requires-python = '>= 3.9'
 dependencies = [
-    'Wagtail>=4.1',
+    'Wagtail>=5.2',
 ]
 classifiers = [
     'Intended Audience :: Developers',
@@ -14,15 +14,17 @@ classifiers = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Framework :: Django',
-    'Framework :: Django :: 3.2',
     'Framework :: Django :: 4.2',
     'Framework :: Django :: 5.0',
+    'Framework :: Django :: 5.1',
+    'Framework :: Wagtail',
+    'Framework :: Wagtail :: 5',
+    'Framework :: Wagtail :: 6',
 ]
 
 [project.urls]
@@ -37,7 +39,7 @@ include = ['wagtail_link_block*']
 
 [tool.ruff]
 line-length = 99
-target-version = 'py38'
+target-version = 'py39'
 
 [tool.ruff.lint]
 select = [

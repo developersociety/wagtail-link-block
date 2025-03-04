@@ -7,16 +7,30 @@ from copy import deepcopy
 from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
-from wagtail.blocks import (
-    BooleanBlock,
-    CharBlock,
-    ChoiceBlock,
-    EmailBlock,
-    PageChooserBlock,
-    StreamBlockValidationError,
-    StructBlock,
-    StructValue,
-)
+try:
+    from wagtail.blocks import (
+        BooleanBlock,
+        CharBlock,
+        ChoiceBlock,
+        EmailBlock,
+        PageChooserBlock,
+        StreamBlockValidationError,
+        StructBlock,
+        StructValue,
+    )
+except ImportError:
+    from wagtail.core.blocks import (
+        BooleanBlock,
+        CharBlock,
+        ChoiceBlock,
+        EmailBlock,
+        PageChooserBlock,
+        StreamBlockValidationError,
+        StructBlock,
+        StructValue,
+    )
+
+
 from wagtail.documents.blocks import DocumentChooserBlock
 
 ##############################################################################

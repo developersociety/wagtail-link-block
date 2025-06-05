@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-24 18:42+0200\n"
+"POT-Creation-Date: 2025-06-05 14:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,30 +18,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: wagtail_link_block/blocks.py:56 wagtail_link_block/blocks.py:61
+#: wagtail_link_block/blocks.py:66 wagtail_link_block/blocks.py:78
 msgid "Page"
 msgstr "Page"
 
-#: wagtail_link_block/blocks.py:56 wagtail_link_block/blocks.py:62
+#: wagtail_link_block/blocks.py:67
+msgid "Page + Anchor"
+msgstr "Page + Ancre"
+
+#: wagtail_link_block/blocks.py:68 wagtail_link_block/blocks.py:79
 msgid "File"
 msgstr "Fichier"
 
-#: wagtail_link_block/blocks.py:56 wagtail_link_block/blocks.py:68
+#: wagtail_link_block/blocks.py:69 wagtail_link_block/blocks.py:85
 msgid "Custom URL"
 msgstr "URL"
 
-#: wagtail_link_block/blocks.py:56
+#: wagtail_link_block/blocks.py:70
+msgid "Email"
+msgstr "Email"
+
+#: wagtail_link_block/blocks.py:71
 msgid "Anchor"
 msgstr "Ancre"
 
-#: wagtail_link_block/blocks.py:59
+#: wagtail_link_block/blocks.py:72 wagtail_link_block/blocks.py:94
+msgid "Phone"
+msgstr "Téléphone"
+
+#: wagtail_link_block/blocks.py:76
 msgid "Link to"
 msgstr "Type de lien"
 
-#: wagtail_link_block/blocks.py:74
+#: wagtail_link_block/blocks.py:91
 msgid "#"
 msgstr "#"
 
-#: wagtail_link_block/blocks.py:77
+#: wagtail_link_block/blocks.py:97
 msgid "Open in new window"
 msgstr "Ouvrir dans une nouvelle fenêtre"

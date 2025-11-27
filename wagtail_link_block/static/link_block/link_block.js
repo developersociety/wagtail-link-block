@@ -29,6 +29,10 @@
         if (value === 'page') {
             page_link.classList.remove('link-block__hidden');
             new_window_toggle.classList.remove('link-block__hidden');
+        } else if (value === 'page_anchor') {
+            page_link.classList.remove('link-block__hidden');
+            anchor_link.classList.remove('link-block__hidden');
+            new_window_toggle.classList.remove('link-block__hidden');
         } else if (value === 'file') {
             file_link.classList.remove('link-block__hidden');
         } else if (value === 'custom_url') {

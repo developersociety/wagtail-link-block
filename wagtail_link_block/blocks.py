@@ -4,6 +4,7 @@ The LinkBlock is not designed to be used on it's own - but as part of other bloc
 
 from copy import deepcopy
 
+from django.core.validators import RegexValidator
 from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
@@ -55,6 +56,9 @@ class URLValue(StructValue):
         email = self.get("email")
         return f"mailto:{email}" if email else None
 
+    def get_relative_url_url(self):
+        return self.get("relative_url") or None
+
     def get_phone_url(self):
         phone = self.get("phone")
         return f"tel:{phone}" if phone else None
@@ -77,6 +81,7 @@ class LinkBlock(StructBlock):
             ("page", _("Page")),
             ("file", _("File")),
             ("custom_url", _("Custom URL")),
+            ("relative_url", _("Relative URL")),
             ("email", _("Email")),
             ("anchor", _("Anchor")),
             ("phone", _("Phone")),
@@ -93,6 +98,14 @@ class LinkBlock(StructBlock):
         classname="custom_url_link url_field",
         validators=[URLOrAbsolutePathValidator()],
         label=_("Custom URL"),
+    )
+    relative_url = CharBlock(
+        max_length=300,
+        required=False,
+        classname="relative_url_link",
+        validators=[RegexValidator(r"^/", message=_("Relative URL must start with '/'."))],
+        label=_("Relative URL"),
+        help_text=_("A site-relative path, e.g. /features/"),
     )
     anchor = CharBlock(
         max_length=300,
@@ -135,13 +148,14 @@ class LinkBlock(StructBlock):
         Subclasses should override this to add new link types, e.g.:
             def get_url_field_default_values(self):
                 defaults = super().get_url_field_default_values()
-                defaults["relative_url"] = ""
+                defaults["my_custom_field"] = ""
                 return defaults
         """
         return {
             "page": None,
             "file": None,
             "custom_url": "",
+            "relative_url": "",
             "anchor": "",
             "email": "",
             "phone": "",

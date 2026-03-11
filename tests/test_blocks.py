@@ -2,7 +2,7 @@ from unittest import mock
 from unittest.mock import Mock
 
 from django.test import SimpleTestCase, TestCase
-from wagtail.blocks import StreamBlockValidationError
+from wagtail.blocks import StreamBlockValidationError, StructBlockValidationError
 from wagtail.documents.models import Document
 from wagtail.models import Page
 
@@ -61,6 +61,18 @@ class URLValueGetURLTestCase(SimpleTestCase):
         value = self._make_value({"link_to": "phone", "phone": "+44123456789"})
         self.assertEqual(value.get_url(), "tel:+44123456789")
 
+    def test_relative_url(self):
+        value = self._make_value({"link_to": "relative_url", "relative_url": "/features/"})
+        self.assertEqual(value.get_url(), "/features/")
+
+    def test_relative_url_empty(self):
+        value = self._make_value({"link_to": "relative_url", "relative_url": ""})
+        self.assertIsNone(value.get_url())
+
+    def test_relative_url_none(self):
+        value = self._make_value({"link_to": "relative_url", "relative_url": None})
+        self.assertIsNone(value.get_url())
+
     def test_no_link_to(self):
         value = self._make_value({"link_to": None})
         self.assertIsNone(value.get_url())
@@ -113,6 +125,7 @@ class LinkBlockCleanTestCase(TestCase):
             "page": None,
             "file": None,
             "custom_url": "",
+            "relative_url": "",
             "anchor": "",
             "email": "",
             "phone": "",
@@ -130,6 +143,7 @@ class LinkBlockCleanTestCase(TestCase):
         # Other link fields should be cleared
         self.assertIsNone(result["page"])
         self.assertIsNone(result["file"])
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
@@ -156,6 +170,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertIsNone(result["page"])
         self.assertIsNone(result["file"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["phone"], "")
 
@@ -174,6 +189,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertIsNone(result["page"])
         self.assertIsNone(result["file"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
 
@@ -192,6 +208,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertIsNone(result["page"])
         self.assertIsNone(result["file"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
 
@@ -210,6 +227,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertEqual(result["page"], page)
         self.assertIsNone(result["file"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
@@ -229,6 +247,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertEqual(result["file"], doc)
         self.assertIsNone(result["page"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
@@ -240,6 +259,34 @@ class LinkBlockCleanTestCase(TestCase):
             block.clean(value)
         self.assertIn("file", ctx.exception.block_errors)
 
+    def test_clean_relative_url_valid(self):
+        block = LinkBlock()
+        value = self._make_block_value(link_to="relative_url", relative_url="/features/")
+        result = block.clean(value)
+        self.assertEqual(result["relative_url"], "/features/")
+        self.assertIsNone(result["page"])
+        self.assertIsNone(result["file"])
+        self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["anchor"], "")
+        self.assertEqual(result["email"], "")
+        self.assertEqual(result["phone"], "")
+
+    def test_clean_relative_url_missing_raises(self):
+        block = LinkBlock()
+        value = self._make_block_value(link_to="relative_url", relative_url="")
+        with self.assertRaises(StreamBlockValidationError) as ctx:
+            block.clean(value)
+        self.assertIn("relative_url", ctx.exception.block_errors)
+
+    def test_clean_relative_url_invalid_raises(self):
+        block = LinkBlock()
+        value = self._make_block_value(
+            link_to="relative_url", relative_url="doesnotstartwithaslash"
+        )
+        with self.assertRaises(StructBlockValidationError) as ctx:
+            block.clean(value)
+        self.assertIn("relative_url", ctx.exception.block_errors)
+
     def test_clean_empty_link_to_passes(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="")
@@ -248,6 +295,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertIsNone(result["page"])
         self.assertIsNone(result["file"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
@@ -265,6 +313,7 @@ class LinkBlockCleanTestCase(TestCase):
         result = block.clean(value)
         self.assertEqual(result["anchor"], "top")
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
         self.assertIsNone(result["page"])
@@ -283,7 +332,7 @@ class LinkBlockCleanTestCase(TestCase):
         defaults = block.get_url_field_default_values()
         self.assertEqual(
             set(defaults.keys()),
-            {"page", "file", "custom_url", "anchor", "email", "phone"},
+            {"page", "file", "custom_url", "relative_url", "anchor", "email", "phone"},
         )
 
     def test_clean_link_type_returns_empty_dict_for_valid_value(self):

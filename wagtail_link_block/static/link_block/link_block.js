@@ -3,7 +3,7 @@
     'use strict';
 
     // Fields that should show the "new window" toggle when selected.
-    const NEW_WINDOW_TYPES = ['page', 'custom_url', 'anchor'];
+    const NEW_WINDOW_TYPES = ['page', 'custom_url', 'anchor', 'relative_url'];
 
     function setRelatedFieldsVisibility(link_type_selector) {
         const value = link_type_selector.value;

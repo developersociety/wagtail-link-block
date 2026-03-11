@@ -1,3 +1,4 @@
+from unittest import mock
 from unittest.mock import Mock
 
 from django.test import SimpleTestCase, TestCase
@@ -70,6 +71,19 @@ class URLValueGetURLTestCase(SimpleTestCase):
 
     def test_missing_link_to_key(self):
         value = self._make_value({})
+        self.assertIsNone(value.get_url())
+
+    def test_get_url_dispatches_to_helper(self):
+        """get_url() calls the per-type helper method."""
+        value = self._make_value({"link_to": "page", "page": Mock(url="/test/")})
+        with mock.patch.object(URLValue, "get_page_url", return_value="/mocked/") as m:
+            result = value.get_url()
+        m.assert_called_once()
+        self.assertEqual(result, "/mocked/")
+
+    def test_get_url_unknown_type_returns_none(self):
+        """get_url() returns None for an unrecognized link_to value."""
+        value = self._make_value({"link_to": "unknown_type"})
         self.assertIsNone(value.get_url())
 
 
@@ -263,6 +277,31 @@ class LinkBlockCleanTestCase(TestCase):
             block.clean(value)
         error_list = ctx.exception.block_errors["custom_url"]
         self.assertIn("You need to add a custom url link", [str(e) for e in error_list])
+
+    def test_get_url_field_default_values_contains_all_types(self):
+        block = LinkBlock()
+        defaults = block.get_url_field_default_values()
+        self.assertEqual(
+            set(defaults.keys()),
+            {"page", "file", "custom_url", "anchor", "email", "phone"},
+        )
+
+    def test_clean_link_type_returns_empty_dict_for_valid_value(self):
+        block = LinkBlock()
+        result = block.clean_link_type("custom_url", {"custom_url": "https://example.com"})
+        self.assertEqual(result, {})
+
+    def test_clean_link_type_returns_error_for_empty_value(self):
+        block = LinkBlock()
+        result = block.clean_link_type("custom_url", {"custom_url": ""})
+        self.assertIn("custom_url", result)
+
+    def test_clean_link_type_dispatches_to_per_type_method(self):
+        """clean_link_type() calls clean_<url_type>() when defined."""
+        block = LinkBlock()
+        with mock.patch.object(LinkBlock, "clean_page", create=True, return_value={}) as m:
+            block.clean_link_type("page", {"page": Mock()})
+        m.assert_called_once()
 
 
 class LinkBlockInitTestCase(SimpleTestCase):

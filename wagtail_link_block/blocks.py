@@ -4,6 +4,7 @@ The LinkBlock is not designed to be used on it's own - but as part of other bloc
 
 from copy import deepcopy
 
+from django.core.validators import RegexValidator
 from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.forms.choosers import URLOrAbsolutePathValidator
@@ -31,20 +32,36 @@ class URLValue(StructValue):
 
     def get_url(self):
         link_to = self.get("link_to")
-
-        if link_to in ("page", "file"):
-            # If file or page check obj is not None
-            if self.get(link_to):
-                return self.get(link_to).url
-        elif link_to == "custom_url":
-            return self.get(link_to)
-        elif link_to == "anchor":
-            return "#" + self.get(link_to)
-        elif link_to == "email":
-            return f"mailto:{self.get(link_to)}"
-        elif link_to == "phone":
-            return f"tel:{self.get(link_to)}"
+        method = getattr(self, f"get_{link_to}_url", None)
+        if method:
+            return method()
         return None
+
+    def get_page_url(self):
+        page = self.get("page")
+        return page.url if page else None
+
+    def get_file_url(self):
+        file = self.get("file")
+        return file.url if file else None
+
+    def get_custom_url_url(self):
+        return self.get("custom_url")
+
+    def get_anchor_url(self):
+        anchor = self.get("anchor")
+        return "#" + anchor if anchor else None
+
+    def get_email_url(self):
+        email = self.get("email")
+        return f"mailto:{email}" if email else None
+
+    def get_relative_url_url(self):
+        return self.get("relative_url") or None
+
+    def get_phone_url(self):
+        phone = self.get("phone")
+        return f"tel:{phone}" if phone else None
 
     def get_link_to(self):
         """
@@ -64,6 +81,7 @@ class LinkBlock(StructBlock):
             ("page", _("Page")),
             ("file", _("File")),
             ("custom_url", _("Custom URL")),
+            ("relative_url", _("Relative URL")),
             ("email", _("Email")),
             ("anchor", _("Anchor")),
             ("phone", _("Phone")),
@@ -80,6 +98,14 @@ class LinkBlock(StructBlock):
         classname="custom_url_link url_field",
         validators=[URLOrAbsolutePathValidator()],
         label=_("Custom URL"),
+    )
+    relative_url = CharBlock(
+        max_length=300,
+        required=False,
+        classname="relative_url_link",
+        validators=[RegexValidator(r"^/", message=_("Relative URL must start with '/'."))],
+        label=_("Relative URL"),
+        help_text=_("A site-relative path, e.g. /features/"),
     )
     anchor = CharBlock(
         max_length=300,
@@ -116,33 +142,64 @@ class LinkBlock(StructBlock):
         """
         self.name = name
 
-    def clean(self, value):
-        clean_values = super().clean(value)
-        errors = {}
+    def get_url_field_default_values(self):
+        """Return a dict mapping each URL-type field name to its empty/default value.
 
-        url_default_values = {
+        Subclasses should override this to add new link types, e.g.:
+            def get_url_field_default_values(self):
+                defaults = super().get_url_field_default_values()
+                defaults["my_custom_field"] = ""
+                return defaults
+        """
+        return {
             "page": None,
             "file": None,
             "custom_url": "",
+            "relative_url": "",
             "anchor": "",
             "email": "",
             "phone": "",
         }
+
+    def clean_link_type(self, url_type, clean_values):
+        """Validate the selected link type's value. Called by clean().
+
+        Dispatches to ``clean_<url_type>(clean_values)`` if such a method
+        exists on the class. Otherwise performs the default check that the
+        selected type's value is not empty.
+
+        Subclasses can add per-type validation by defining a method, e.g.::
+
+            def clean_relative_url(self, clean_values):
+                # custom validation ...
+                return {}  # or {field_name: ErrorList([...])}
+        """
+        method = getattr(self, f"clean_{url_type}", None)
+        if method:
+            return method(clean_values)
+        # Default: check that the selected type has a non-empty value
+        if clean_values.get(url_type) in [None, ""]:
+            return {
+                url_type: ErrorList(
+                    ["You need to add a {} link".format(url_type.replace("_", " "))]
+                )
+            }
+        return {}
+
+    def clean(self, value):
+        clean_values = super().clean(value)
+        errors = {}
+        url_default_values = self.get_url_field_default_values()
         url_type = clean_values.get("link_to")
 
-        # Check that a value has been uploaded for the chosen link type
-        if url_type != "" and clean_values.get(url_type) in [None, ""]:
-            errors[url_type] = ErrorList(
-                ["You need to add a {} link".format(url_type.replace("_", " "))]
-            )
-        else:
-            try:
-                # Remove values added for link types not selected
-                url_default_values.pop(url_type, None)
-                for field in url_default_values:
-                    clean_values[field] = url_default_values[field]
-            except KeyError:
-                errors[url_type] = ErrorList(["Enter a valid link type"])
+        if url_type != "":
+            errors.update(self.clean_link_type(url_type, clean_values))
+
+        if not errors:
+            # Remove values added for link types not selected
+            url_default_values.pop(url_type, None)
+            for field in url_default_values:
+                clean_values[field] = url_default_values[field]
 
         if errors:
             raise StreamBlockValidationError(block_errors=errors, non_block_errors=ErrorList([]))

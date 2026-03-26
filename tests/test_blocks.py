@@ -1,7 +1,8 @@
+from unittest import mock
 from unittest.mock import Mock
 
 from django.test import SimpleTestCase, TestCase
-from wagtail.blocks import StreamBlockValidationError
+from wagtail.blocks import StreamBlockValidationError, StructBlockValidationError
 from wagtail.documents.models import Document
 from wagtail.models import Page
 
@@ -60,6 +61,18 @@ class URLValueGetURLTestCase(SimpleTestCase):
         value = self._make_value({"link_to": "phone", "phone": "+44123456789"})
         self.assertEqual(value.get_url(), "tel:+44123456789")
 
+    def test_relative_url(self):
+        value = self._make_value({"link_to": "relative_url", "relative_url": "/features/"})
+        self.assertEqual(value.get_url(), "/features/")
+
+    def test_relative_url_empty(self):
+        value = self._make_value({"link_to": "relative_url", "relative_url": ""})
+        self.assertIsNone(value.get_url())
+
+    def test_relative_url_none(self):
+        value = self._make_value({"link_to": "relative_url", "relative_url": None})
+        self.assertIsNone(value.get_url())
+
     def test_no_link_to(self):
         value = self._make_value({"link_to": None})
         self.assertIsNone(value.get_url())
@@ -70,6 +83,19 @@ class URLValueGetURLTestCase(SimpleTestCase):
 
     def test_missing_link_to_key(self):
         value = self._make_value({})
+        self.assertIsNone(value.get_url())
+
+    def test_get_url_dispatches_to_helper(self):
+        """get_url() calls the per-type helper method."""
+        value = self._make_value({"link_to": "page", "page": Mock(url="/test/")})
+        with mock.patch.object(URLValue, "get_page_url", return_value="/mocked/") as m:
+            result = value.get_url()
+        m.assert_called_once()
+        self.assertEqual(result, "/mocked/")
+
+    def test_get_url_unknown_type_returns_none(self):
+        """get_url() returns None for an unrecognized link_to value."""
+        value = self._make_value({"link_to": "unknown_type"})
         self.assertIsNone(value.get_url())
 
 
@@ -99,6 +125,7 @@ class LinkBlockCleanTestCase(TestCase):
             "page": None,
             "file": None,
             "custom_url": "",
+            "relative_url": "",
             "anchor": "",
             "email": "",
             "phone": "",
@@ -116,6 +143,7 @@ class LinkBlockCleanTestCase(TestCase):
         # Other link fields should be cleared
         self.assertIsNone(result["page"])
         self.assertIsNone(result["file"])
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
@@ -142,6 +170,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertIsNone(result["page"])
         self.assertIsNone(result["file"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["phone"], "")
 
@@ -160,6 +189,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertIsNone(result["page"])
         self.assertIsNone(result["file"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
 
@@ -178,6 +208,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertIsNone(result["page"])
         self.assertIsNone(result["file"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
 
@@ -196,6 +227,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertEqual(result["page"], page)
         self.assertIsNone(result["file"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
@@ -215,6 +247,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertEqual(result["file"], doc)
         self.assertIsNone(result["page"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
@@ -226,6 +259,34 @@ class LinkBlockCleanTestCase(TestCase):
             block.clean(value)
         self.assertIn("file", ctx.exception.block_errors)
 
+    def test_clean_relative_url_valid(self):
+        block = LinkBlock()
+        value = self._make_block_value(link_to="relative_url", relative_url="/features/")
+        result = block.clean(value)
+        self.assertEqual(result["relative_url"], "/features/")
+        self.assertIsNone(result["page"])
+        self.assertIsNone(result["file"])
+        self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["anchor"], "")
+        self.assertEqual(result["email"], "")
+        self.assertEqual(result["phone"], "")
+
+    def test_clean_relative_url_missing_raises(self):
+        block = LinkBlock()
+        value = self._make_block_value(link_to="relative_url", relative_url="")
+        with self.assertRaises(StreamBlockValidationError) as ctx:
+            block.clean(value)
+        self.assertIn("relative_url", ctx.exception.block_errors)
+
+    def test_clean_relative_url_invalid_raises(self):
+        block = LinkBlock()
+        value = self._make_block_value(
+            link_to="relative_url", relative_url="doesnotstartwithaslash"
+        )
+        with self.assertRaises(StructBlockValidationError) as ctx:
+            block.clean(value)
+        self.assertIn("relative_url", ctx.exception.block_errors)
+
     def test_clean_empty_link_to_passes(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="")
@@ -234,6 +295,7 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertIsNone(result["page"])
         self.assertIsNone(result["file"])
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
@@ -251,6 +313,7 @@ class LinkBlockCleanTestCase(TestCase):
         result = block.clean(value)
         self.assertEqual(result["anchor"], "top")
         self.assertEqual(result["custom_url"], "")
+        self.assertEqual(result["relative_url"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
         self.assertIsNone(result["page"])
@@ -263,6 +326,31 @@ class LinkBlockCleanTestCase(TestCase):
             block.clean(value)
         error_list = ctx.exception.block_errors["custom_url"]
         self.assertIn("You need to add a custom url link", [str(e) for e in error_list])
+
+    def test_get_url_field_default_values_contains_all_types(self):
+        block = LinkBlock()
+        defaults = block.get_url_field_default_values()
+        self.assertEqual(
+            set(defaults.keys()),
+            {"page", "file", "custom_url", "relative_url", "anchor", "email", "phone"},
+        )
+
+    def test_clean_link_type_returns_empty_dict_for_valid_value(self):
+        block = LinkBlock()
+        result = block.clean_link_type("custom_url", {"custom_url": "https://example.com"})
+        self.assertEqual(result, {})
+
+    def test_clean_link_type_returns_error_for_empty_value(self):
+        block = LinkBlock()
+        result = block.clean_link_type("custom_url", {"custom_url": ""})
+        self.assertIn("custom_url", result)
+
+    def test_clean_link_type_dispatches_to_per_type_method(self):
+        """clean_link_type() calls clean_<url_type>() when defined."""
+        block = LinkBlock()
+        with mock.patch.object(LinkBlock, "clean_page", create=True, return_value={}) as m:
+            block.clean_link_type("page", {"page": Mock()})
+        m.assert_called_once()
 
 
 class LinkBlockInitTestCase(SimpleTestCase):

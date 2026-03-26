@@ -8,9 +8,9 @@ requires-python = '>= 3.10'
 dependencies = [
     'Wagtail>=6.3',
 ]
+license = 'BSD-3-Clause'
 classifiers = [
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: BSD License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
@@ -31,7 +31,7 @@ classifiers = [
 Homepage = "https://github.com/developersociety/wagtail-link-block"
 
 [build-system]
-requires = ['setuptools >= 61.0']
+requires = ['setuptools >= 77.0.3']
 build-backend = 'setuptools.build_meta'
 
 [tool.setuptools.packages.find]

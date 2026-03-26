@@ -42,7 +42,7 @@ class MyButton(StructBlock):
 And create the template `blocks/my_button_block.html`:
 
 ```html
-<a href="{{ self.link.get_url }}" {% if self.link.new_window %}target="_blank"{% endif %}>
+<a href="{{ self.link.get_url }}" {% if self.link.new_window %}target="_blank" rel="noopener noreferrer"{% endif %}>
     {{ self.text }}
 </a>
 ```

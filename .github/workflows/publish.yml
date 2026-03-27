@@ -12,6 +12,8 @@ jobs:
     name: Build packages
     runs-on: ubuntu-24.04
     environment: publish
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout

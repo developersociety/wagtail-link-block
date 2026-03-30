@@ -86,4 +86,4 @@ jobs:
         run: |
           pip install $(grep -E "^(tox|tox-uv)==" requirements/local.txt)
           tox -e coverage
-          tox -qq exec -e coverage -- coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+          tox -qq exec -e coverage --no-list-dependencies -- coverage report --format=markdown >> $GITHUB_STEP_SUMMARY

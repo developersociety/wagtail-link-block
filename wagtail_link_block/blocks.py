@@ -36,6 +36,8 @@ class URLValue(StructValue):
             # If file or page check obj is not None
             if self.get(link_to):
                 return self.get(link_to).url
+        elif link_to == "page_anchor":
+            return self.get("page").url + "#" + self.get("anchor")
         elif link_to == "custom_url":
             return self.get(link_to)
         elif link_to == "anchor":
@@ -62,6 +64,7 @@ class LinkBlock(StructBlock):
     link_to = ChoiceBlock(
         choices=[
             ("page", _("Page")),
+            ("page_anchor", _("Page + Anchor")),
             ("file", _("File")),
             ("custom_url", _("Custom URL")),
             ("email", _("Email")),
@@ -131,14 +134,25 @@ class LinkBlock(StructBlock):
         url_type = clean_values.get("link_to")
 
         # Check that a value has been uploaded for the chosen link type
-        if url_type != "" and clean_values.get(url_type) in [None, ""]:
+        if url_type not in ["", "page_anchor"] and clean_values.get(url_type) in [None, ""]:
             errors[url_type] = ErrorList(
                 ["You need to add a {} link".format(url_type.replace("_", " "))]
             )
+        elif url_type == "page_anchor" and (
+            clean_values.get("page") in [None, ""] or clean_values.get("anchor") in [None, ""]
+        ):
+            if clean_values.get("page") in [None, ""]:
+                errors["page"] = ErrorList(["You need to add a page link"])
+            if clean_values.get("anchor") in [None, ""]:
+                errors["anchor"] = ErrorList(["You need to add an anchor link"])
         else:
             try:
-                # Remove values added for link types not selected
-                url_default_values.pop(url_type, None)
+                if url_type == "page_anchor":
+                    url_default_values.pop("page", None)
+                    url_default_values.pop("anchor", None)
+                else:
+                    # Remove values added for link types not selected
+                    url_default_values.pop(url_type, None)
                 for field in url_default_values:
                     clean_values[field] = url_default_values[field]
             except KeyError:

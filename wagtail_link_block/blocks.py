@@ -37,9 +37,10 @@ class URLValue(StructValue):
             if page:
                 # Append the optional anchor, unless the page has no URL
                 page_anchor = (self.get("page_anchor") or "").lstrip("#")
-                if page.url and page_anchor:
-                    return f"{page.url}#{page_anchor}"
-                return page.url
+                url = page.url
+                if url and page_anchor:
+                    return f"{url}#{page_anchor}"
+                return url
         elif link_to == "file":
             if self.get(link_to):
                 return self.get(link_to).url

@@ -11,8 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Support for Django 6.0 and Wagtail 7.3/7.4.
 - Optional anchor for Page links, so a link can point to a section of another page (e.g.
   `/about-us/#team`) and still follow the page if it is moved or renamed (Thibaud Demay).
+- `LinkBlock` can be extended with `get_<type>_url()` and `clean_<type>()` methods, and
+  `get_url_field_default_values()`, so subclasses can add or change link types without copying
+  `get_url()` and `clean()`. See "Extending" in the README (D Chukhin).
 
 ### Changed
+
+- `get_url()` returns `None` for an empty Custom URL, Email, Phone or Anchor link. Previously
+  these returned `""`, `"mailto:"`, `"tel:"`, or raised a `TypeError` for an empty anchor.
 
 - `LinkBlock` has a new `page_anchor` child block. This doesn't change the database, but
   `makemigrations` will create new migrations for every `StreamField` that uses `LinkBlock`, and

@@ -26,6 +26,34 @@ class URLValueGetURLTestCase(SimpleTestCase):
         value = self._make_value({"link_to": "page", "page": None})
         self.assertIsNone(value.get_url())
 
+    def test_page_with_anchor(self):
+        page = Mock()
+        page.url = "/about-us/"
+        value = self._make_value({"link_to": "page", "page": page, "page_anchor": "team"})
+        self.assertEqual(value.get_url(), "/about-us/#team")
+
+    def test_page_with_anchor_strips_hash(self):
+        page = Mock()
+        page.url = "/about-us/"
+        value = self._make_value({"link_to": "page", "page": page, "page_anchor": "#team"})
+        self.assertEqual(value.get_url(), "/about-us/#team")
+
+    def test_page_with_empty_anchor(self):
+        page = Mock()
+        page.url = "/about-us/"
+        value = self._make_value({"link_to": "page", "page": page, "page_anchor": ""})
+        self.assertEqual(value.get_url(), "/about-us/")
+
+    def test_page_with_anchor_and_no_page_url(self):
+        page = Mock()
+        page.url = None
+        value = self._make_value({"link_to": "page", "page": page, "page_anchor": "team"})
+        self.assertIsNone(value.get_url())
+
+    def test_page_with_none_and_anchor(self):
+        value = self._make_value({"link_to": "page", "page": None, "page_anchor": "team"})
+        self.assertIsNone(value.get_url())
+
     def test_file_with_object(self):
         doc = Mock()
         doc.url = "/documents/report.pdf"
@@ -50,6 +78,10 @@ class URLValueGetURLTestCase(SimpleTestCase):
 
     def test_anchor(self):
         value = self._make_value({"link_to": "anchor", "anchor": "section-1"})
+        self.assertEqual(value.get_url(), "#section-1")
+
+    def test_anchor_strips_hash(self):
+        value = self._make_value({"link_to": "anchor", "anchor": "#section-1"})
         self.assertEqual(value.get_url(), "#section-1")
 
     def test_email(self):
@@ -97,6 +129,7 @@ class LinkBlockCleanTestCase(TestCase):
         defaults = {
             "link_to": link_to,
             "page": None,
+            "page_anchor": "",
             "file": None,
             "custom_url": "",
             "anchor": "",
@@ -170,6 +203,19 @@ class LinkBlockCleanTestCase(TestCase):
             block.clean(value)
         self.assertIn("anchor", ctx.exception.block_errors)
 
+    def test_clean_anchor_strips_hash(self):
+        block = LinkBlock()
+        value = self._make_block_value(link_to="anchor", anchor="#my-section")
+        result = block.clean(value)
+        self.assertEqual(result["anchor"], "my-section")
+
+    def test_clean_anchor_bare_hash_raises(self):
+        block = LinkBlock()
+        value = self._make_block_value(link_to="anchor", anchor="#")
+        with self.assertRaises(StreamBlockValidationError) as ctx:
+            block.clean(value)
+        self.assertIn("anchor", ctx.exception.block_errors)
+
     def test_clean_phone_valid(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="phone", phone="+44123456789")
@@ -199,6 +245,36 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertEqual(result["anchor"], "")
         self.assertEqual(result["email"], "")
         self.assertEqual(result["phone"], "")
+
+    def test_clean_page_with_anchor_valid(self):
+        block = LinkBlock()
+        page = Page.objects.first()
+        value = self._make_block_value(link_to="page", page=page.pk, page_anchor="team")
+        result = block.clean(value)
+        self.assertEqual(result["page"], page)
+        self.assertEqual(result["page_anchor"], "team")
+        self.assertEqual(result["anchor"], "")
+
+    def test_clean_page_anchor_strips_hash(self):
+        block = LinkBlock()
+        page = Page.objects.first()
+        value = self._make_block_value(link_to="page", page=page.pk, page_anchor="#team")
+        result = block.clean(value)
+        self.assertEqual(result["page_anchor"], "team")
+
+    def test_clean_page_anchor_missing_page_raises(self):
+        block = LinkBlock()
+        value = self._make_block_value(link_to="page", page=None, page_anchor="team")
+        with self.assertRaises(StreamBlockValidationError) as ctx:
+            block.clean(value)
+        self.assertIn("page", ctx.exception.block_errors)
+
+    def test_clean_page_anchor_cleared_for_other_types(self):
+        block = LinkBlock()
+        value = self._make_block_value(link_to="anchor", anchor="top", page_anchor="stale")
+        result = block.clean(value)
+        self.assertEqual(result["anchor"], "top")
+        self.assertEqual(result["page_anchor"], "")
 
     def test_clean_page_missing_raises(self):
         block = LinkBlock()

@@ -32,14 +32,22 @@ class URLValue(StructValue):
     def get_url(self):
         link_to = self.get("link_to")
 
-        if link_to in ("page", "file"):
-            # If file or page check obj is not None
+        if link_to == "page":
+            page = self.get(link_to)
+            if page:
+                # Append the optional anchor, unless the page has no URL
+                page_anchor = (self.get("page_anchor") or "").lstrip("#")
+                url = page.url
+                if url and page_anchor:
+                    return f"{url}#{page_anchor}"
+                return url
+        elif link_to == "file":
             if self.get(link_to):
                 return self.get(link_to).url
         elif link_to == "custom_url":
             return self.get(link_to)
         elif link_to == "anchor":
-            return "#" + self.get(link_to)
+            return "#" + self.get(link_to).lstrip("#")
         elif link_to == "email":
             return f"mailto:{self.get(link_to)}"
         elif link_to == "phone":
@@ -73,6 +81,13 @@ class LinkBlock(StructBlock):
         label=_("Link to"),
     )
     page = PageChooserBlock(required=False, classname="page_link", label=_("Page"))
+    page_anchor = CharBlock(
+        max_length=300,
+        required=False,
+        classname="page_anchor_link",
+        label=_("Anchor (optional)"),
+        help_text=_('Link to a section of the page, e.g. "team" links to /page/#team'),
+    )
     file = DocumentChooserBlock(required=False, classname="file_link", label=_("File"))
     custom_url = CharBlock(
         max_length=300,
@@ -122,6 +137,7 @@ class LinkBlock(StructBlock):
 
         url_default_values = {
             "page": None,
+            "page_anchor": "",
             "file": None,
             "custom_url": "",
             "anchor": "",
@@ -129,6 +145,10 @@ class LinkBlock(StructBlock):
             "phone": "",
         }
         url_type = clean_values.get("link_to")
+
+        # Save anchors without a leading "#", so a bare "#" fails the required check below
+        for field in ("anchor", "page_anchor"):
+            clean_values[field] = (clean_values.get(field) or "").lstrip("#")
 
         # Check that a value has been uploaded for the chosen link type
         if url_type != "" and clean_values.get(url_type) in [None, ""]:
@@ -139,6 +159,8 @@ class LinkBlock(StructBlock):
             try:
                 # Remove values added for link types not selected
                 url_default_values.pop(url_type, None)
+                if url_type == "page":
+                    url_default_values.pop("page_anchor")
                 for field in url_default_values:
                     clean_values[field] = url_default_values[field]
             except KeyError:

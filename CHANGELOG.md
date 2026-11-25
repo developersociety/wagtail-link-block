@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - `get_url()` returns `None` for an empty Custom URL, Email, Phone or Anchor link. Previously
-  these returned `""`, `"mailto:"`, `"tel:"`, or raised a `TypeError` for an empty anchor.
+  these returned `""`, `"mailto:"`, `"tel:"` or `"#"`.
 
 - `LinkBlock` has a new `page_anchor` child block. This doesn't change the database, but
   `makemigrations` will create new migrations for every `StreamField` that uses `LinkBlock`, and

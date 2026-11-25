@@ -38,7 +38,14 @@ class URLValue(StructValue):
 
     def get_page_url(self):
         page = self.get("page")
-        return page.url if page else None
+        if not page:
+            return None
+        # Append the optional anchor, unless the page has no URL
+        page_anchor = (self.get("page_anchor") or "").lstrip("#")
+        url = page.url
+        if url and page_anchor:
+            return f"{url}#{page_anchor}"
+        return url
 
     def get_file_url(self):
         file = self.get("file")
@@ -48,7 +55,8 @@ class URLValue(StructValue):
         return self.get("custom_url")
 
     def get_anchor_url(self):
-        anchor = self.get("anchor")
+        # Values saved before anchors were normalised in clean() may start with "#"
+        anchor = (self.get("anchor") or "").lstrip("#")
         return "#" + anchor if anchor else None
 
     def get_email_url(self):
@@ -86,6 +94,13 @@ class LinkBlock(StructBlock):
         label=_("Link to"),
     )
     page = PageChooserBlock(required=False, classname="page_link", label=_("Page"))
+    page_anchor = CharBlock(
+        max_length=300,
+        required=False,
+        classname="page_anchor_link",
+        label=_("Anchor (optional)"),
+        help_text=_('Link to a section of the page, e.g. "team" links to /page/#team'),
+    )
     file = DocumentChooserBlock(required=False, classname="file_link", label=_("File"))
     custom_url = CharBlock(
         max_length=300,
@@ -178,6 +193,10 @@ class LinkBlock(StructBlock):
         url_default_values = self.get_url_field_default_values()
         url_type = clean_values.get("link_to")
 
+        # Save anchors without a leading "#", so a bare "#" fails the required check below
+        for field in ("anchor", "page_anchor"):
+            clean_values[field] = (clean_values.get(field) or "").lstrip("#")
+
         if url_type != "":
             errors.update(self.clean_link_type(url_type, clean_values))
 
@@ -186,6 +205,9 @@ class LinkBlock(StructBlock):
             url_default_values.pop(url_type, None)
             for field in url_default_values:
                 clean_values[field] = url_default_values[field]
+            # page_anchor isn't a link type, but only applies to page links
+            if url_type != "page":
+                clean_values["page_anchor"] = ""
 
         if errors:
             raise StreamBlockValidationError(block_errors=errors, non_block_errors=ErrorList([]))

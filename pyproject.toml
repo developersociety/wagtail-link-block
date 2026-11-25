@@ -1,16 +1,16 @@
 [project]
 name = 'wagtail-link-block'
-version = '1.1.7'
+version = '1.2'
 description = 'A Block for Wagtail that lets users choose a Page/Document/URL/email/etc. as a link'
 readme = 'README.md'
 maintainers = [{ name = 'The Developer Society', email = 'studio@dev.ngo' }]
 requires-python = '>= 3.10'
 dependencies = [
-    'Wagtail>=6.3',
+    'Wagtail>=7.0',
 ]
+license = 'BSD-3-Clause'
 classifiers = [
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: BSD License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
@@ -21,9 +21,8 @@ classifiers = [
     'Programming Language :: Python :: 3.14',
     'Framework :: Django',
     'Framework :: Django :: 4.2',
-    'Framework :: Django :: 5.1',
     'Framework :: Django :: 5.2',
-    'Framework :: Wagtail :: 6',
+    'Framework :: Django :: 6.0',
     'Framework :: Wagtail :: 7',
 ]
 
@@ -31,7 +30,7 @@ classifiers = [
 Homepage = "https://github.com/developersociety/wagtail-link-block"
 
 [build-system]
-requires = ['setuptools >= 61.0']
+requires = ['setuptools >= 77.0.3']
 build-backend = 'setuptools.build_meta'
 
 [tool.setuptools.packages.find]
@@ -39,7 +38,7 @@ include = ['wagtail_link_block*']
 
 [tool.ruff]
 line-length = 99
-target-version = 'py39'
+target-version = 'py310'
 
 [tool.ruff.lint]
 select = [

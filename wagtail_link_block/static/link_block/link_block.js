@@ -3,7 +3,10 @@
     'use strict';
 
     // Fields that should show the "new window" toggle when selected.
-    const NEW_WINDOW_TYPES = ['page', 'custom_url', 'anchor'];
+    const NEW_WINDOW_TYPES = ['page', 'file', 'custom_url', 'anchor'];
+
+    // Optional extra fields shown alongside a link type's main field.
+    const EXTRA_FIELDS = {page: ['page_anchor']};
 
     function setRelatedFieldsVisibility(link_type_selector) {
         const value = link_type_selector.value;
@@ -20,6 +23,12 @@
             if (field) {
                 field.classList.remove('link-block__hidden');
             }
+            (EXTRA_FIELDS[value] || []).forEach(function(name) {
+                const extraField = parent.querySelector('.' + name + '_link_field');
+                if (extraField) {
+                    extraField.classList.remove('link-block__hidden');
+                }
+            });
 
             // Show new_window toggle for applicable types
             const newWindowField = parent.querySelector('.new_window_link_field');

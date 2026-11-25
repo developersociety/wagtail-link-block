@@ -6,7 +6,7 @@ readme = 'README.md'
 maintainers = [{ name = 'The Developer Society', email = 'studio@dev.ngo' }]
 requires-python = '>= 3.10'
 dependencies = [
-    'Wagtail>=6.3',
+    'Wagtail>=7.0',
 ]
 license = 'BSD-3-Clause'
 classifiers = [
@@ -21,9 +21,8 @@ classifiers = [
     'Programming Language :: Python :: 3.14',
     'Framework :: Django',
     'Framework :: Django :: 4.2',
-    'Framework :: Django :: 5.1',
     'Framework :: Django :: 5.2',
-    'Framework :: Wagtail :: 6',
+    'Framework :: Django :: 6.0',
     'Framework :: Wagtail :: 7',
 ]
 
@@ -39,7 +38,7 @@ include = ['wagtail_link_block*']
 
 [tool.ruff]
 line-length = 99
-target-version = 'py39'
+target-version = 'py310'
 
 [tool.ruff.lint]
 select = [

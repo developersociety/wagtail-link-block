@@ -85,7 +85,8 @@ class LinkBlock(StructBlock):
         max_length=300,
         required=False,
         classname="page_anchor_link",
-        label=_("#"),
+        label=_("Anchor (optional)"),
+        help_text=_('Link to a section of the page, e.g. "team" links to /page/#team'),
     )
     file = DocumentChooserBlock(required=False, classname="file_link", label=_("File"))
     custom_url = CharBlock(

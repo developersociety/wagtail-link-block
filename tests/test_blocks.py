@@ -203,6 +203,19 @@ class LinkBlockCleanTestCase(TestCase):
             block.clean(value)
         self.assertIn("anchor", ctx.exception.block_errors)
 
+    def test_clean_anchor_strips_hash(self):
+        block = LinkBlock()
+        value = self._make_block_value(link_to="anchor", anchor="#my-section")
+        result = block.clean(value)
+        self.assertEqual(result["anchor"], "my-section")
+
+    def test_clean_anchor_bare_hash_raises(self):
+        block = LinkBlock()
+        value = self._make_block_value(link_to="anchor", anchor="#")
+        with self.assertRaises(StreamBlockValidationError) as ctx:
+            block.clean(value)
+        self.assertIn("anchor", ctx.exception.block_errors)
+
     def test_clean_phone_valid(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="phone", phone="+44123456789")
@@ -241,6 +254,13 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertEqual(result["page"], page)
         self.assertEqual(result["page_anchor"], "team")
         self.assertEqual(result["anchor"], "")
+
+    def test_clean_page_anchor_strips_hash(self):
+        block = LinkBlock()
+        page = Page.objects.first()
+        value = self._make_block_value(link_to="page", page=page.pk, page_anchor="#team")
+        result = block.clean(value)
+        self.assertEqual(result["page_anchor"], "team")
 
     def test_clean_page_anchor_missing_page_raises(self):
         block = LinkBlock()

@@ -146,6 +146,10 @@ class LinkBlock(StructBlock):
         }
         url_type = clean_values.get("link_to")
 
+        # Save anchors without a leading "#", so a bare "#" fails the required check below
+        for field in ("anchor", "page_anchor"):
+            clean_values[field] = (clean_values.get(field) or "").lstrip("#")
+
         # Check that a value has been uploaded for the chosen link type
         if url_type != "" and clean_values.get(url_type) in [None, ""]:
             errors[url_type] = ErrorList(

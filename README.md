@@ -46,3 +46,8 @@ And create the template `blocks/my_button_block.html`:
     {{ self.text }}
 </a>
 ```
+
+## Changelog
+
+See [CHANGELOG.md](https://github.com/developersociety/wagtail-link-block/blob/master/CHANGELOG.md)
+for release notes, including upgrade notes for each version.

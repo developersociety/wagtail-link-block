@@ -29,6 +29,7 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/developersociety/wagtail-link-block"
+Changelog = "https://github.com/developersociety/wagtail-link-block/blob/master/CHANGELOG.md"
 
 [build-system]
 requires = ['setuptools >= 77.0.3']

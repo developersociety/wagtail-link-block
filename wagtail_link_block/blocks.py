@@ -52,7 +52,7 @@ class URLValue(StructValue):
         return file.url if file else None
 
     def get_custom_url_url(self):
-        return self.get("custom_url")
+        return self.get("custom_url") or None
 
     def get_anchor_url(self):
         # Values saved before anchors were normalised in clean() may start with "#"

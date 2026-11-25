@@ -75,7 +75,7 @@ class URLValueGetURLTestCase(SimpleTestCase):
 
     def test_custom_url_empty(self):
         value = self._make_value({"link_to": "custom_url", "custom_url": ""})
-        self.assertEqual(value.get_url(), "")
+        self.assertIsNone(value.get_url())
 
     def test_anchor(self):
         value = self._make_value({"link_to": "anchor", "anchor": "section-1"})

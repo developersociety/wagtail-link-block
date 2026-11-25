@@ -9,6 +9,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Support for Django 6.0 and Wagtail 7.3/7.4.
+- Optional anchor for Page links, so a link can point to a section of another page (e.g.
+  `/about-us/#team`) and still follow the page if it is moved or renamed (Thibaud Demay).
+
+### Changed
+
+- `LinkBlock` has a new `page_anchor` child block. This doesn't change the database, but
+  `makemigrations` will create new migrations for every `StreamField` that uses `LinkBlock`, and
+  `makemigrations --check` will fail until they are created.
+- A leading `#` is now stripped from anchors when saving, so a bare `#` no longer passes
+  validation.
+
+### Fixed
+
+- Anchor links saved with a leading `#` (e.g. `#foo`) now render as `#foo` instead of `##foo`.
 
 ### Removed
 

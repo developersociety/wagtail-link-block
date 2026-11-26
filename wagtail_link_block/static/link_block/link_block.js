@@ -9,6 +9,7 @@
         const value = link_type_selector.value;
         const parent = link_type_selector.closest('.link_block'),
             page_link = parent.querySelector('.page_link_field'),
+            page_anchor_link = parent.querySelector('.page_anchor_link_field'),
             file_link = parent.querySelector('.file_link_field'),
             custom_url_link = parent.querySelector('.custom_url_link_field'),
             anchor_link = parent.querySelector('.anchor_link_field'),
@@ -18,6 +19,10 @@
 
         // first hide all
         page_link.classList.add('link-block__hidden');
+        // Projects with an overridden admin template may not have this field.
+        if (page_anchor_link) {
+            page_anchor_link.classList.add('link-block__hidden');
+        }
         file_link.classList.add('link-block__hidden');
         custom_url_link.classList.add('link-block__hidden');
         anchor_link.classList.add('link-block__hidden');
@@ -28,6 +33,9 @@
         // display the one
         if (value === 'page') {
             page_link.classList.remove('link-block__hidden');
+            if (page_anchor_link) {
+                page_anchor_link.classList.remove('link-block__hidden');
+            }
             new_window_toggle.classList.remove('link-block__hidden');
         } else if (value === 'file') {
             file_link.classList.remove('link-block__hidden');

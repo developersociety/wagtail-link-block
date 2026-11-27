@@ -49,11 +49,13 @@ And create the template `blocks/my_button_block.html`:
 {% endif %}
 ```
 
-`get_url` returns `None` when there's no link to render (no link type chosen, or the chosen page
-or document has been deleted), so wrap the link in `{% if %}` to avoid `href="None"`.
+`get_url` returns `None` when there's no link (no link type chosen, or the chosen page or
+document has since been deleted). The `{% if %}` skips the whole button in that case, instead of
+rendering `href="None"`. If the text should still show, render it in an `{% else %}` without the
+`<a>`.
 
-Using `{% include_block self.link %}` renders a plain link with the default
-`blocks/link_block.html` template, which outputs nothing when there's no URL.
+`{% include_block self.link %}` uses the default `blocks/link_block.html` template. It renders an
+`<a>` with the URL as its text, and nothing when there's no URL.
 
 ## Extending
 

@@ -290,6 +290,37 @@ class LinkBlockCleanTestCase(TestCase):
         self.assertEqual(result["anchor"], "top")
         self.assertEqual(result["page_anchor"], "")
 
+    def test_clean_new_window_cleared_for_email_and_phone(self):
+        block = LinkBlock()
+        for link_to, field, link_value in [
+            ("email", "email", "a@example.com"),
+            ("phone", "phone", "+44"),
+        ]:
+            with self.subTest(link_to=link_to):
+                value = self._make_block_value(
+                    link_to=link_to, new_window=True, **{field: link_value}
+                )
+                result = block.clean(value)
+                self.assertFalse(result["new_window"])
+
+    def test_clean_new_window_kept_for_toggle_types(self):
+        block = LinkBlock()
+        doc = Document.objects.create(title="Test Document")
+        page = Page.objects.first()
+        link_values = {
+            "page": page.pk,
+            "file": doc.pk,
+            "custom_url": "https://example.com",
+            "anchor": "top",
+        }
+        for link_to, link_value in link_values.items():
+            with self.subTest(link_to=link_to):
+                value = self._make_block_value(
+                    link_to=link_to, new_window=True, **{link_to: link_value}
+                )
+                result = block.clean(value)
+                self.assertTrue(result["new_window"])
+
     def test_clean_page_missing_raises(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="page", page=None)

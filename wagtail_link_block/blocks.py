@@ -130,6 +130,9 @@ class LinkBlock(StructBlock):
         form_template = "wagtailadmin/block_forms/link_block.html"
         template = "blocks/link_block.html"
 
+    # Link types which show the "Open in new window" toggle in the admin
+    new_window_link_types = ("page", "file", "custom_url", "anchor")
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         # Make a deep copy of the link-to, as we need to pass the
@@ -208,6 +211,9 @@ class LinkBlock(StructBlock):
             # page_anchor isn't a link type, but only applies to page links
             if url_type != "page":
                 clean_values["page_anchor"] = ""
+            # The toggle is hidden for other link types, so a stale value can't be unticked
+            if url_type not in self.new_window_link_types:
+                clean_values["new_window"] = False
 
         if errors:
             raise StreamBlockValidationError(block_errors=errors, non_block_errors=ErrorList([]))

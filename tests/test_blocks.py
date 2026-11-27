@@ -2,7 +2,7 @@ from unittest import mock
 from unittest.mock import Mock
 
 from django.test import SimpleTestCase, TestCase
-from wagtail.blocks import StreamBlockValidationError
+from wagtail.blocks import CharBlock, ChoiceBlock, StreamBlockValidationError
 from wagtail.documents.models import Document
 from wagtail.models import Page
 
@@ -289,6 +289,51 @@ class LinkBlockCleanTestCase(TestCase):
         result = block.clean(value)
         self.assertEqual(result["anchor"], "top")
         self.assertEqual(result["page_anchor"], "")
+
+    def test_clean_new_window_cleared_for_email_and_phone(self):
+        block = LinkBlock()
+        for link_to, field, link_value in [
+            ("email", "email", "a@example.com"),
+            ("phone", "phone", "+44"),
+        ]:
+            with self.subTest(link_to=link_to):
+                value = self._make_block_value(
+                    link_to=link_to, new_window=True, **{field: link_value}
+                )
+                result = block.clean(value)
+                self.assertFalse(result["new_window"])
+
+    def test_clean_new_window_kept_for_toggle_types(self):
+        block = LinkBlock()
+        doc = Document.objects.create(title="Test Document")
+        page = Page.objects.first()
+        link_values = {
+            "page": page.pk,
+            "file": doc.pk,
+            "custom_url": "https://example.com",
+            "anchor": "top",
+        }
+        for link_to, link_value in link_values.items():
+            with self.subTest(link_to=link_to):
+                value = self._make_block_value(
+                    link_to=link_to, new_window=True, **{link_to: link_value}
+                )
+                result = block.clean(value)
+                self.assertTrue(result["new_window"])
+
+    def test_clean_new_window_cleared_for_subclass_link_type(self):
+        class RelativeURLLinkBlock(LinkBlock):
+            link_to = ChoiceBlock(choices=[("relative_url", "Relative URL")], required=False)
+            relative_url = CharBlock(required=False)
+
+        block = RelativeURLLinkBlock()
+        value = self._make_block_value(
+            link_to="relative_url", relative_url="/about/", new_window=True
+        )
+
+        result = block.clean(value)
+
+        self.assertFalse(result["new_window"])
 
     def test_clean_page_missing_raises(self):
         block = LinkBlock()

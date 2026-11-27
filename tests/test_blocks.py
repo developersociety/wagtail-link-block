@@ -2,7 +2,7 @@ from unittest import mock
 from unittest.mock import Mock
 
 from django.test import SimpleTestCase, TestCase
-from wagtail.blocks import StreamBlockValidationError
+from wagtail.blocks import CharBlock, ChoiceBlock, StreamBlockValidationError
 from wagtail.documents.models import Document
 from wagtail.models import Page
 
@@ -320,6 +320,20 @@ class LinkBlockCleanTestCase(TestCase):
                 )
                 result = block.clean(value)
                 self.assertTrue(result["new_window"])
+
+    def test_clean_new_window_cleared_for_subclass_link_type(self):
+        class RelativeURLLinkBlock(LinkBlock):
+            link_to = ChoiceBlock(choices=[("relative_url", "Relative URL")], required=False)
+            relative_url = CharBlock(required=False)
+
+        block = RelativeURLLinkBlock()
+        value = self._make_block_value(
+            link_to="relative_url", relative_url="/about/", new_window=True
+        )
+
+        result = block.clean(value)
+
+        self.assertFalse(result["new_window"])
 
     def test_clean_page_missing_raises(self):
         block = LinkBlock()

@@ -40,11 +40,16 @@ class URLValue(StructValue):
         page = self.get("page")
         if not page:
             return None
-        # Append the optional anchor, unless the page has no URL
-        page_anchor = (self.get("page_anchor") or "").lstrip("#")
         url = page.url
-        if url and page_anchor:
-            return f"{url}#{page_anchor}"
+        if not url:
+            return url
+        # Append the optional querystring and anchor
+        page_querystring = (self.get("page_querystring") or "").lstrip("?")
+        page_anchor = (self.get("page_anchor") or "").lstrip("#")
+        if page_querystring:
+            url = f"{url}?{page_querystring}"
+        if page_anchor:
+            url = f"{url}#{page_anchor}"
         return url
 
     def get_file_url(self):
@@ -94,6 +99,13 @@ class LinkBlock(StructBlock):
         label=_("Link to"),
     )
     page = PageChooserBlock(required=False, classname="page_link", label=_("Page"))
+    page_querystring = CharBlock(
+        max_length=300,
+        required=False,
+        classname="page_querystring_link",
+        label=_("Querystring (optional)"),
+        help_text=_('Add a querystring to the page, e.g. "tab=events" links to /page/?tab=events'),
+    )
     page_anchor = CharBlock(
         max_length=300,
         required=False,
@@ -196,6 +208,7 @@ class LinkBlock(StructBlock):
         # Save anchors without a leading "#", so a bare "#" fails the required check below
         for field in ("anchor", "page_anchor"):
             clean_values[field] = (clean_values.get(field) or "").lstrip("#")
+        clean_values["page_querystring"] = (clean_values.get("page_querystring") or "").lstrip("?")
 
         if url_type != "":
             errors.update(self.clean_link_type(url_type, clean_values))
@@ -205,8 +218,9 @@ class LinkBlock(StructBlock):
             url_default_values.pop(url_type, None)
             for field in url_default_values:
                 clean_values[field] = url_default_values[field]
-            # page_anchor isn't a link type, but only applies to page links
+            # page_querystring and page_anchor aren't link types, but only apply to page links
             if url_type != "page":
+                clean_values["page_querystring"] = ""
                 clean_values["page_anchor"] = ""
 
         if errors:

@@ -1,10 +1,9 @@
-{% load i18n wagtailadmin_tags %}
+{% load i18n %}
 {# extended to add `link_block_field` and default `hidden` classes to link detail fields. #}
 <div class="{{ classname }}">
   {% if help_text %}
     <span>
       <div class="help">
-        {% icon name="help" classname="default" %}
         {{ help_text }}
       </div>
     </span>

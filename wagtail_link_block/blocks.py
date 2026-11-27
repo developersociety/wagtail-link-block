@@ -125,7 +125,7 @@ class LinkBlock(StructBlock):
     class Meta:
         label = None
         value_class = URLValue
-        icon = "fa-share-square"
+        icon = "link"
         form_classname = "link_block"
         form_template = "wagtailadmin/block_forms/link_block.html"
         template = "blocks/link_block.html"

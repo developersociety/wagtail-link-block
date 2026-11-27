@@ -2,7 +2,7 @@ from unittest import mock
 from unittest.mock import Mock
 
 from django.test import SimpleTestCase, TestCase
-from wagtail.blocks import StreamBlockValidationError
+from wagtail.blocks import StructBlockValidationError
 from wagtail.documents.models import Document
 from wagtail.models import Page
 
@@ -171,12 +171,12 @@ class LinkBlockCleanTestCase(TestCase):
         block = LinkBlock()
 
         value_empty_string = self._make_block_value(link_to="custom_url", custom_url="")
-        with self.assertRaises(StreamBlockValidationError) as ctx:
+        with self.assertRaises(StructBlockValidationError) as ctx:
             block.clean(value_empty_string)
         self.assertIn("custom_url", ctx.exception.block_errors)
 
         value_none = self._make_block_value(link_to="custom_url", custom_url=None)
-        with self.assertRaises(StreamBlockValidationError) as ctx:
+        with self.assertRaises(StructBlockValidationError) as ctx:
             block.clean(value_none)
         self.assertIn("custom_url", ctx.exception.block_errors)
 
@@ -195,7 +195,7 @@ class LinkBlockCleanTestCase(TestCase):
     def test_clean_email_missing_raises(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="email", email="")
-        with self.assertRaises(StreamBlockValidationError) as ctx:
+        with self.assertRaises(StructBlockValidationError) as ctx:
             block.clean(value)
         self.assertIn("email", ctx.exception.block_errors)
 
@@ -213,7 +213,7 @@ class LinkBlockCleanTestCase(TestCase):
     def test_clean_anchor_missing_raises(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="anchor", anchor="")
-        with self.assertRaises(StreamBlockValidationError) as ctx:
+        with self.assertRaises(StructBlockValidationError) as ctx:
             block.clean(value)
         self.assertIn("anchor", ctx.exception.block_errors)
 
@@ -226,7 +226,7 @@ class LinkBlockCleanTestCase(TestCase):
     def test_clean_anchor_bare_hash_raises(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="anchor", anchor="#")
-        with self.assertRaises(StreamBlockValidationError) as ctx:
+        with self.assertRaises(StructBlockValidationError) as ctx:
             block.clean(value)
         self.assertIn("anchor", ctx.exception.block_errors)
 
@@ -244,7 +244,7 @@ class LinkBlockCleanTestCase(TestCase):
     def test_clean_phone_missing_raises(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="phone", phone="")
-        with self.assertRaises(StreamBlockValidationError) as ctx:
+        with self.assertRaises(StructBlockValidationError) as ctx:
             block.clean(value)
         self.assertIn("phone", ctx.exception.block_errors)
 
@@ -279,7 +279,7 @@ class LinkBlockCleanTestCase(TestCase):
     def test_clean_page_anchor_missing_page_raises(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="page", page=None, page_anchor="team")
-        with self.assertRaises(StreamBlockValidationError) as ctx:
+        with self.assertRaises(StructBlockValidationError) as ctx:
             block.clean(value)
         self.assertIn("page", ctx.exception.block_errors)
 
@@ -293,7 +293,7 @@ class LinkBlockCleanTestCase(TestCase):
     def test_clean_page_missing_raises(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="page", page=None)
-        with self.assertRaises(StreamBlockValidationError) as ctx:
+        with self.assertRaises(StructBlockValidationError) as ctx:
             block.clean(value)
         self.assertIn("page", ctx.exception.block_errors)
 
@@ -312,7 +312,7 @@ class LinkBlockCleanTestCase(TestCase):
     def test_clean_file_missing_raises(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="file", file=None)
-        with self.assertRaises(StreamBlockValidationError) as ctx:
+        with self.assertRaises(StructBlockValidationError) as ctx:
             block.clean(value)
         self.assertIn("file", ctx.exception.block_errors)
 
@@ -349,7 +349,7 @@ class LinkBlockCleanTestCase(TestCase):
     def test_clean_error_message_format(self):
         block = LinkBlock()
         value = self._make_block_value(link_to="custom_url", custom_url="")
-        with self.assertRaises(StreamBlockValidationError) as ctx:
+        with self.assertRaises(StructBlockValidationError) as ctx:
             block.clean(value)
         error_list = ctx.exception.block_errors["custom_url"]
         self.assertIn("You need to add a custom url link", [str(e) for e in error_list])

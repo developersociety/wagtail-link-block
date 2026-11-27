@@ -61,6 +61,8 @@ For a link type called `<type>`:
   selected type has a value.
 - `LinkBlock.get_url_field_default_values()` returns the empty value for each link type's field.
   `clean()` uses it to clear the fields of the types that weren't selected.
+- `LinkBlock.new_window_link_types` lists the types which can open in a new window. `clean()`
+  sets `new_window` to `False` for any other type.
 
 To add a new type, you also need to add its field, and redefine the `link_to` choices to include
 it. For example, a relative URL type:

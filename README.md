@@ -42,10 +42,20 @@ class MyButton(StructBlock):
 And create the template `blocks/my_button_block.html`:
 
 ```html
-<a href="{{ self.link.get_url }}" {% if self.link.new_window %}target="_blank" rel="noopener noreferrer"{% endif %}>
-    {{ self.text }}
-</a>
+{% if self.link.get_url %}
+    <a href="{{ self.link.get_url }}" {% if self.link.new_window %}target="_blank" rel="noopener noreferrer"{% endif %}>
+        {{ self.text }}
+    </a>
+{% endif %}
 ```
+
+`get_url` returns `None` when there's no link (no link type chosen, or the chosen page or
+document has since been deleted). The `{% if %}` skips the whole button in that case, instead of
+rendering `href="None"`. If the text should still show, render it in an `{% else %}` without the
+`<a>`.
+
+`{% include_block self.link %}` uses the default `blocks/link_block.html` template. It renders an
+`<a>` with the URL as its text, and nothing when there's no URL.
 
 ## Extending
 

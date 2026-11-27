@@ -407,3 +407,33 @@ class LinkBlockSetNameTestCase(SimpleTestCase):
         self.assertEqual(block.name, "my_link")
         # Label should remain None (not auto-set from name)
         self.assertIsNone(block.meta.label)
+
+
+class LinkBlockRenderTestCase(SimpleTestCase):
+    """Tests for the default LinkBlock template."""
+
+    def test_render_custom_url(self):
+        block = LinkBlock()
+        value = block.to_python({"link_to": "custom_url", "custom_url": "https://example.com"})
+
+        html = block.render(value)
+
+        self.assertHTMLEqual(html, '<a href="https://example.com">https://example.com</a>')
+
+    def test_render_new_window(self):
+        block = LinkBlock()
+        value = block.to_python(
+            {"link_to": "custom_url", "custom_url": "https://example.com", "new_window": True}
+        )
+
+        html = block.render(value)
+
+        self.assertIn('target="_blank" rel="noopener noreferrer"', html)
+
+    def test_render_empty_link_outputs_nothing(self):
+        block = LinkBlock()
+        value = block.to_python({"link_to": ""})
+
+        html = block.render(value)
+
+        self.assertEqual(html.strip(), "")

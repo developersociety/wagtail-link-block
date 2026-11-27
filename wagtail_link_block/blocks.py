@@ -13,8 +13,8 @@ from wagtail.blocks import (
     ChoiceBlock,
     EmailBlock,
     PageChooserBlock,
-    StreamBlockValidationError,
     StructBlock,
+    StructBlockValidationError,
     StructValue,
 )
 from wagtail.documents.blocks import DocumentChooserBlock
@@ -210,6 +210,6 @@ class LinkBlock(StructBlock):
                 clean_values["page_anchor"] = ""
 
         if errors:
-            raise StreamBlockValidationError(block_errors=errors, non_block_errors=ErrorList([]))
+            raise StructBlockValidationError(block_errors=errors)
 
         return clean_values

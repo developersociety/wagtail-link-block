@@ -105,4 +105,5 @@ class MyLinkBlock(LinkBlock):
 ```
 
 The admin only shows and hides the fields of the built-in link types, so a field added by a
-subclass is always shown.
+subclass is always shown, and the "Open in new window" toggle is hidden for its type. Only add a
+type to `new_window_link_types` if you also change the admin JS to show the toggle for it.

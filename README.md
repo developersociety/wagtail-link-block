@@ -47,6 +47,11 @@ And create the template `blocks/my_button_block.html`:
 </a>
 ```
 
+## Changelog
+
+See [CHANGELOG.md](https://github.com/developersociety/wagtail-link-block/blob/master/CHANGELOG.md)
+for release notes, including upgrade notes for each version.
+
 ## Extending
 
 `LinkBlock` can be subclassed to add your own link types, or change how an existing type is

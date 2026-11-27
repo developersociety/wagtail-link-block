@@ -1,0 +1,51 @@
+name: Bug report
+description: Something in wagtail-link-block isn't working as expected.
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, including any error messages or tracebacks.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How you defined the block, and what you did in the admin or template.
+      placeholder: |
+        1. Add `LinkBlock()` to a StructBlock
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: wagtail-link-block version
+      placeholder: "1.2"
+    validations:
+      required: true
+  - type: input
+    id: wagtail-version
+    attributes:
+      label: Wagtail version
+      placeholder: "7.0"
+    validations:
+      required: true
+  - type: input
+    id: django-version
+    attributes:
+      label: Django version
+      placeholder: "5.2"
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      placeholder: "3.13"
